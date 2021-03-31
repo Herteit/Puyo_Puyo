@@ -1,7 +1,7 @@
 # Puyo_Puyo
 Amusez vous bien Kappa
 
-const int NBCOLORS = 5, HEIGHT = ?, WIDTH = ?, FALLSPEED = ?, SIZEPUYO = ?, WIDTHMAT = ?, HEIGHTMAT = ?, WAITINGPOSX = ?, WAITINGPOSY = ?;
+const int NBCOLORS = 5, HEIGHT = ?, WIDTH = ?, FALLSPEED = ?, SIZEPUYO = ?, WIDTHMAT = 6, HEIGHTMAT = 12, WAITINGPOSX = ?, WAITINGPOSY = ?;
 
 struct Pos {
 	int x ;
