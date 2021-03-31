@@ -122,3 +122,10 @@ int destroyBlock (block[][] mat) {
 	}
 	return nbrChain ; 
 }
+
+int main {
+
+
+
+	return 0 ;
+}
