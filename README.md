@@ -23,7 +23,7 @@ struct BlockFall {
 struct Player {
 	BlockFall bf1;
 	BlockFall bf2 ;
-	Block[][] blocks //pas sure de ca ;
+	Block blocks[][] //pas sure de ca ;
 	int score ;
 }
 
