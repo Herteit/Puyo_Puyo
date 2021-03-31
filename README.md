@@ -54,7 +54,9 @@ AttribuerGroupe - Anton
 
 checkAllChains - Anton
 
-blockAtStart 
+bool blockAtStart (int[][] blocks) {
+	return (blockTest(blocks,0,(WIDTHMAT/2 -1)) || blockTest(blocks,0,WIDTHMAT/2));
+}
 
 int countNbBlocksEqualID (block[][] mat, int ID) {
 	int nb = 0; 
