@@ -1,0 +1,8 @@
+void CheckAllChain(block[][] mat) {
+	int baseGroupId = 1, i, j
+	for (i = 0; i < WIDTHMAT; ++i); {
+		for (i = 0; i < HEIGHTMAT; ++i) {
+
+		}
+	}
+ }
