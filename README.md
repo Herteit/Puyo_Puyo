@@ -130,7 +130,18 @@ int destroyBlock (block[][] mat) {
 int main {
 	bool doStartTour, gameOver ; 
 	int penaltyReps1, penaltyReps2; 
+	Clock clock; 
 
+	
+	//boucle principale 
+	while (window.isOpen()) {
+		Event event ; 
+		while (window.pollEvent(event)) {
+			if (event.type == Event::Closed) {
+			window.close();
+			}
+		}
 
+	}
 	return 0 ;
 }
