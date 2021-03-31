@@ -31,3 +31,86 @@ struct Game {
 	Player p1;
 	Player p2; 
 }
+
+initBlockFall
+
+switchColor
+
+random0toNb
+
+randBlockFall
+
+startTour
+
+blockTest
+
+doGravityOnAll
+
+continueFall
+
+blockDown
+
+countNbBlocksEqualID
+
+AttribuerGroupe
+
+blockAtStart
+
+checkAllChains
+
+
+
+void setMalusOnPlayer (Player p1, int reps) {
+	int nb ; 
+	for (int i = 0 ; i < reps ; i++) {
+		nb = random0toNb(WIDTHMAT);
+		if (p1.blocks[0][nb].exist == false) {
+			p1.blocks[i][0].color = w ;
+			p1.blocks[i][0].exist = true ; 
+			doGravityOnAll(p1.blocks);		
+		}
+	}
+}
+
+void resetBlocksForID (Block[][] block, int ID) {
+	for (int i = 0 ; i < WIDTHMAT ; i++) {
+		for (int j = 0 ; j < HEIGHTMAT ; j++) {
+			if (block[i][j].blockID == ID && block[i][j].color !w) {
+				block[i][j].exist = false ;
+				block[i][j].color = v ; 
+				if (block[i][j+1].color == w) {
+					block[i][j+1].exist = false ; 
+					block[i][j+1].color = v ; 
+				}
+				if (block[i][j-1].color == w) {
+					block[i][j-1].exist = false ; 
+					block[i][j-1].color = v ; 
+				}
+				if (block[i-1][j].color == w) {
+					block[i-1][j].exist = false ; 
+					block[i-1][j].color = v ; 
+				}
+				if (block[i+1][j].color == w) {
+					block[i+1][j].exist = false ; 
+					block[i+1][j].color = v ; 
+				}
+			}
+		}
+	}
+}
+
+int destroyBlock (block[][] mat) {
+	int nbrChain = 0 ; 
+	for (int k = 1 ; k < WIDTHMAT*HEIGHTMAT ; k++ ) {
+		if (countNbBlocksEqualId(mat, k)>3) {
+			resetBlocksForId(mat, k) ; 
+			nbrChain ++ ; 
+		}
+	} 
+	for (int i = 0 ; i < WIDTHMAT ; i++) {
+		for (int j = 0 ; j < HEIGHTMAT ; j++) {
+			mat[i][j].blockID = 0 ; 
+		}
+	}
+	return nbrChain ; 
+}
