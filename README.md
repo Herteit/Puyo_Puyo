@@ -50,15 +50,23 @@ continueFall
 
 blockDown
 
-countNbBlocksEqualID
+AttribuerGroupe - Anton
 
-AttribuerGroupe
+checkAllChains - Anton
 
-blockAtStart
+blockAtStart 
 
-checkAllChains
-
-
+int countNbBlocksEqualID (block[][] mat, int ID) {
+	int nb = 0; 
+	for (int i = 0 ; i < WIDTHMAT ; i++) {
+		for (int j = 0 ; j < HEIGHTMAT ; j++) {
+			if (mat[i][j].groupID == ID) {
+				nb ++ ;
+			}
+		}
+	}
+	return nb;
+}
 
 void setMalusOnPlayer (Player p1, int reps) {
 	int nb ; 
