@@ -1,6 +1,8 @@
 # Puyo_Puyo
 Amusez vous bien Kappa
 
+const int NBCOLORS = 5, HEIGHT = ?, WIDTH = ?, FALLSPEED = ?, SIZEPUYO = ?, WIDTHMAT = ?, HEIGHTMAT = ?, WAITINGPOSX = ?, WAITINGPOSY = ?;
+
 struct Pos {
 	int x ;
 	int y ;
@@ -126,7 +128,8 @@ int destroyBlock (block[][] mat) {
 }
 
 int main {
-
+	bool doStartTour, gameOver ; 
+	int penaltyReps1, penaltyReps2; 
 
 
 	return 0 ;
