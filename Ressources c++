@@ -1,0 +1,9 @@
+Gérer ce qui se passe dans la fenêtre de jeu : 
+ http://www.sfml-dev.org/tutorials/2.1/window-events.php
+ 
+Créer des formes : 
+ http://www.sfml-dev.org/tutorials/2.1/graphics-shape.php
+ http://www.sfml-dev.org/documentation/2.1/classsf_1_1Color.php
+ 
+Gérer le temps : 
+ https://www.sfml-dev.org/tutorials/2.5/system-time-fr.php
