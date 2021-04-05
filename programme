@@ -175,17 +175,18 @@ int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 int main() {
 
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
-	bool doStartTour = true, gameOver = false, up = false, left = false, right=false, down=false; 
+	bool doStartTourPlayer1 = true, doStartTourPlayer2 = true, gameOver = false, up = false, left = false, right=false, down=false; 
 	int penaltyReps1, penaltyReps2; 
 	sf::Clock clock; 
 
 	
 	//boucle principale 
 	while (window.isOpen()) {
+		//actions du joueur
 		sf::Event event ; 
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
-			window.close();
+				window.close();
 			}
 			if (event.type == sf::Event::KeyPressed) {
 				if (event.key.code == sf::Keyboard::Left) {
@@ -216,6 +217,27 @@ int main() {
 				}
 			}
 
+		}
+		//mise jour de l'état du jeu 
+		
+		//1er joueur
+		if (doStartTourPlayer1) {
+			startTour(p1);
+			doStartTourPlayer1 = false;
+		}
+		
+		//actions du joueur (j'ai la flemme de les faire)
+		
+		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
+		
+		if (!continueFall(p1.blocks, p1.bf1) {
+			blockDown(p1);
+			doGravityOnAll(p1.blocks);
+			do {
+			
+			
+			} while (   ) ;
+		
 		}
 
 	}
