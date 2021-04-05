@@ -1,7 +1,9 @@
 #include <SFML/Graphics.hpp>
+
+//on définit les constantes hors du main pour ne pas avoir à les appeler à chaque fois qu'elles sont utilisées dans un programme
 const int NBCOLORS = 5, HEIGHT = 600, WIDTH = 900, FALLSPEED = 10, SIZEPUYO = 1/30 * WIDTH, WIDTHMAT = 6, HEIGHTMAT = 12, WAITINGPOSX = WIDTH /2 - SIZEPUYO, WAITINGPOSY = 100;
 
-const char VOID = 'v', WHITE = 'w', RED = 'r', YELLOW = 'y', BLUE = 'b';
+const char VOID = 'v', WHITE = 'w', RED = 'r', YELLOW = 'y', BLUE = 'b', GREEN = 'g', PURPLE = 'p';
 
 
 struct Pos {
