@@ -188,6 +188,7 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
 	bool doStartTourPlayer1 = true, doStartTourPlayer2 = true, gameOver = false, up = false, left = false, right=false, down=false; 
 	int penaltyReps1, penaltyReps2; 
+	Game game ;
 	sf::Clock clock; 
 
 	
@@ -233,7 +234,7 @@ int main() {
 		
 		//1er joueur
 		if (doStartTourPlayer1) {
-			startTour(p1);
+			startTour(game.p1);
 			doStartTourPlayer1 = false;
 		}
 		
@@ -241,13 +242,26 @@ int main() {
 		
 		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
 		
-		if (!continueFall(p1.blocks, p1.bf1) {
-			blockDown(p1);
-			doGravityOnAll(p1.blocks);
+		if (!continueFall(game.p1.blocks, game.p1.bf1) {
+			blockDown(game.p1);
+			doGravityOnAll(game.p1.blocks);
 			do {
-			
-			
-			} while (   ) ;
+				checkAllChains(game.p1.mat);
+				nbCombinations = destroyBlock(game.p1.blocks);
+				doGravityOnAll(game.p1.blocks); 
+				if (nbCombinations > 0) {
+					penaltyReps2 += Math.pow(2, nbCombinations);
+				}
+			} while (nbCombinations > 0) ;
+			if (penaltyReps1 > 0) {
+				setClearBlocksOnPlayer(game.p1, penaltyReps1);
+				penaltyReps1 = 0; 
+			}
+			if (!blockAtStart) {
+				doStartTourPlayer1 = true; 
+			} else {
+				gameOver = true;
+			}
 		
 		}
 
