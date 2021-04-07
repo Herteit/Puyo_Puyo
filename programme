@@ -104,9 +104,9 @@ void doGravityOnAll (Block blocks[WIDTHMAT][HEIGHTMAT]) {
 			if (blockTest(blocks , i+1, j)){
 				for (k = j; k>=0; k--) {
 					blocks[i+1][j].exist = blocks[i][j].exist ;
-					blocks[i+1][j].color <- blocks[i][j].color ;
-					blocks[i][j].exist <- faux ;
-					blocks[i][j].color <- v;
+					blocks[i+1][j].color = blocks[i][j].color ;
+					blocks[i][j].exist = false ;
+					blocks[i][j].color = VOID;
 				}
 			}
 		}
