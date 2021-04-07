@@ -112,7 +112,7 @@ bool blockTest(Block mat[WIDTHMAT][HEIGHTMAT], int i, int j) {
 
 void doGravityOnAll (Block blocks[WIDTHMAT][HEIGHTMAT]) {
 	int i, j, k;
-	for (i = 0; i < WIDTHMAT; i++) {
+	for (i = 0; i < WIDTHMAT -1; i++) {
 		for (j = 0; j<HEIGHTMAT-1;j++){
 			if (blockTest(blocks , i+1, j)){
 				for (k = j; k>=0; k--) {
