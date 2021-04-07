@@ -56,8 +56,6 @@ void initBlockFall(BlockFall bf1, BlockFall bf2) {
 	bf1.orient = 2;
 	bf1.color1 = bf2.color1;
 	bf1.color2 = bf2.color2;
-	bf1.pos.x = (WIDTH - SIZEPUYO)/2;
-	bf1.pos.y = 0;
 	bf1.posMat.x = WIDTHMAT /2 -1;
 	bf1.posMat.y = 0;
 	bf1.speed = bf2.speed;
@@ -93,6 +91,8 @@ int random0toNb (int nb) {
 }
 
 //randBlockFall
+
+
 void startTour(Player p1) {
 	initBlockFall(p1.bf1, p1.bf2);
 	randBlockFall(p1.bf2);
