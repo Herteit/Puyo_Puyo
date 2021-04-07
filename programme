@@ -83,8 +83,6 @@ int random0toNb (int nb) {
 }
 
 //randBlockFall
-
-//startTour
 void startTour(Player p1) {
 	initBlockFall(p1.bf1, p1.bf2);
 	randBlockFall(p1.bf2);
@@ -92,14 +90,10 @@ void startTour(Player p1) {
 	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].exist = true;
 }
 
-
-//blockTest
 bool blockTest(Block mat[WIDTHMAT][HEIGHTMAT], int i, int j) {
 	return (mat[i][j].exist == false);
 }
 
-
-//doGravityOnAll
 void doGravityOnAll (Block blocks[WIDTHMAT][HEIGHTMAT]) {
 	int i, j, k;
 	for (i = 0; i < WIDTHMAT; i++) {
@@ -116,10 +110,9 @@ void doGravityOnAll (Block blocks[WIDTHMAT][HEIGHTMAT]) {
 	}
 }
 
-//continueFall
 bool continueFall(Block blocks[WIDTHMAT][HEIGHTMAT], BlockFall bf) {
 	bool test;
-	switch(bf.orient) :{
+	switch(bf.orient){
 		case 0 : 
 			test = ((blockTest(blocks, bf.posMat.x, bf.posMat.y + 1)) || (blockTest(blocks, bf.posMat.x - 1, bf.posMat.y +1)) || (bf.posMat.y < HEIGHTMAT - 1));
 		break;
@@ -136,9 +129,8 @@ bool continueFall(Block blocks[WIDTHMAT][HEIGHTMAT], BlockFall bf) {
 	return test;
 }
 
-//blockDown
 void blockDown (Player p1) {
-	switch (p1.bf1.orient) : {
+	switch (p1.bf1.orient) {
 		case 0 : { 
 			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].color = p1.bf1.color2;
 			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist = true;
@@ -333,7 +325,7 @@ int main() {
 		
 		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
 		
-		if (!continueFall(game.p2.blocks, game.p2.bf1) {
+		if (!continueFall(game.p2.blocks, game.p2.bf1)) {
 			blockDown(game.p2);
 			doGravityOnAll(game.p2.blocks);
 			do {
