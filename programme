@@ -81,8 +81,19 @@ int random0toNb (int nb) {
 //randBlockFall
 
 //startTour
+void startTour(Player p1) {
+	initBlockFall(p1.bf1, p1.bf2);
+	randBlockFall(p1.bf2);
+	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].color = p1.bf1.color;
+	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].exist] = true;
+}
+
 
 //blockTest
+bool blockTest(Block mat[WIDTHMAT][HEIGHTMAT], int i, int j) {
+	return (mat[i][j].exist == faux);
+}
+
 
 //doGravityOnAll
 
