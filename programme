@@ -95,8 +95,6 @@ void randBlockFall (BlockFall randBlock) {
 	randBlock.orient = 3;
 	randBlock.color1 = switchColor(random0toNb(NBCOLORS));
 	randBlock.color2 = switchColor(random0toNb(NBCOLORS));
-	randBlock.pos.x = WAITINGPOSX;
-	randBlock.pos.y = WAITINGPOSY;
 	randBlock.speed = FALLSPEED;
 }
 
