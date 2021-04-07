@@ -53,14 +53,14 @@ struct Math {
 
 //initBlockFall
 void initBlockFall(BlockFall bf1, BlockFall bf2) {
-	p1.bf1.orient = 2;
-	p1.bf1.color1 = p1.bf2.color1;
-	p1.bf1.color2 = p1.bf2.color2;
-	p1.bf1.pos.x = (WIDTH - SIZEPUYO)/2;
-	p1.bf1.pos.y = 0;
-	p1.bf1.posMat.x = WIDTHMAT /2 -1;
-	p1.bf1.posMat.y = 0;
-	p1.bf1.speed = p1.bf2.speed;
+	bf1.orient = 2;
+	bf1.color1 = bf2.color1;
+	bf1.color2 = bf2.color2;
+	bf1.pos.x = (WIDTH - SIZEPUYO)/2;
+	bf1.pos.y = 0;
+	bf1.posMat.x = WIDTHMAT /2 -1;
+	bf1.posMat.y = 0;
+	bf1.speed = bf2.speed;
 }
 
 char switchColor (int nb) {
@@ -302,7 +302,7 @@ int main() {
 		
 		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
 		
-		if (!continueFall(game.p1.blocks, game.p1.bf1) {
+		if (!continueFall(game.p1.blocks, game.p1.bf1)) {
 			blockDown(game.p1);
 			doGravityOnAll(game.p1.blocks);
 			do {
