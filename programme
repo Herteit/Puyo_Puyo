@@ -97,6 +97,8 @@ bool blockTest(Block mat[WIDTHMAT][HEIGHTMAT], int i, int j) {
 
 //doGravityOnAll
 
+
+
 //continueFall
 
 //blockDown
