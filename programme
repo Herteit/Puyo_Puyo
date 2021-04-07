@@ -163,7 +163,7 @@ void blockDown (Player p1) {
 //AttribuerGroupe - Anton
 
 //checkAllChains - Anton not finito
-void CheckAllChains(Block mat[WIDTHMAT][HEIGHTMAT]) {
+void checkAllChains(Block mat[WIDTHMAT][HEIGHTMAT]) {
 	int baseGroupId = 1;
 	for (int i = 0; i < WIDTHMAT; i++) {
 		for (int j = 0; j < HEIGHTMAT; j++) {
@@ -310,14 +310,14 @@ int main() {
 				nbCombinations = destroyBlock(game.p1.blocks);
 				doGravityOnAll(game.p1.blocks); 
 				if (nbCombinations > 0) {
-					penaltyReps2 += Math.pow(2, nbCombinations);
+					penaltyReps2 += pow(2, nbCombinations);
 				}
 			} while (nbCombinations > 0) ;
 			if (penaltyReps1 > 0) {
-				setClearBlocksOnPlayer(game.p1, penaltyReps1);
+				setMalusOnPlayer(game.p1, penaltyReps1);
 				penaltyReps1 = 0; 
 			}
-			if (!blockAtStart) {
+			if (!blockAtStart(game.p1.blocks)) {
 				doStartTourPlayer1 = true; 
 			} else {
 				gameOver = true;
@@ -343,14 +343,14 @@ int main() {
 				nbCombinations = destroyBlock(game.p2.blocks);
 				doGravityOnAll(game.p2.blocks); 
 				if (nbCombinations > 0) {
-					penaltyReps1 += Math.pow(2, nbCombinations);
+					penaltyReps1 += pow(2, nbCombinations);
 				}
 			} while (nbCombinations > 0) ;
 			if (penaltyReps2 > 0) {
-				setClearBlocksOnPlayer(game.p2, penaltyReps2);
+				setMalusOnPlayer(game.p2, penaltyReps2);
 				penaltyReps2 = 0; 
 			}
-			if (!blockAtStart) {
+			if (!blockAtStart(game.p2.blocks)) {
 				doStartTourPlayer2 = true; 
 			} else {
 				gameOver = true;
