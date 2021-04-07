@@ -97,7 +97,21 @@ bool blockTest(Block mat[WIDTHMAT][HEIGHTMAT], int i, int j) {
 
 //doGravityOnAll
 
-
+void doGravityOnAll (Block blocks[WIDTHMAT][HEIGHTMAT]) {
+	int i, j, k;
+	for (i = 0; i < WIDTHMAT; i++) {
+		for (j = 0; j<HEIGHTMAT-1;j++){
+			if (blockTest(blocks , i+1, j)){
+				for (k = j; k>=0; k--) {
+					blocks[i+1][j].exist = blocks[i][j].exist ;
+					blocks[i+1][j].color <- blocks[i][j].color ;
+					blocks[i][j].exist <- faux ;
+					blocks[i][j].color <- v;
+				}
+			}
+		}
+	}
+}
 
 //continueFall
 
@@ -114,7 +128,8 @@ void CheckAllChains(Block mat[WIDTHMAT][HEIGHTMAT]) {
 		}
 	}
 }
-bool blockAtStart (int blocks[WIDTHMAT][HEIGHTMAT]) {
+
+bool blockAtStart (Block blocks[WIDTHMAT][HEIGHTMAT]) {
 	return (blockTest(blocks,0,(WIDTHMAT/2 -1)) || blockTest(blocks,0,WIDTHMAT/2));
 }
 
