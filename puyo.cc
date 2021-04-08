@@ -294,7 +294,8 @@ int main() {
 	Game game ;
 	sf::Clock clock; 
 
-    float delay = 0;
+	float delayPlayer1 = 0;
+	float delayPlayer2 = 0;
 	
 	//boucle principale 
 	while (window.isOpen()) {
@@ -337,14 +338,8 @@ int main() {
 		
 		//mise jour de l'état du jeu 
 		float dt = clock.restart().asSeconds();
-		
-        delay += dt;
-        
-        if (delay > DELAY) {
-            // TODO: faire tomber les pièces d'une case
-            
-            delay -= DELAY;
-        }
+		delayPlayer1 += dt;
+		delayPlayer2 += dt; 
         
 		
 		//1er joueur
@@ -355,7 +350,10 @@ int main() {
 		
 		//actions du joueur (j'ai la flemme de les faire)
 		
-		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
+		if (delayPlayer1 > DELAY) {	
+			doGravityOnBlockFall(game.p1);
+			delayPlayer1 -= DELAY;
+		}
 		
 		if (!continueFall(game.p1)) {
 			blockDown(game.p1);
@@ -388,7 +386,10 @@ int main() {
 		
 		//actions du joueur 2 (j'ai la flemme de les faire)
 		
-		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
+		if (delayPlayer2 > DELAY) {		
+			doGravityOnBlockFall(game.p2);
+			delayPlayer2 -= DELAY;
+		}
 		
 		if (!continueFall(game.p2)) {
 			blockDown(game.p2);
