@@ -146,20 +146,20 @@ void doGravityOnAll (Player& player) {
 	}
 }
 
-bool continueFall(Block blocks[WIDTHMAT][HEIGHTMAT], BlockFall bf) {
+bool continueFall((const Player& player) {
 	bool test;
-	switch(bf.orient){
+	switch(player.bf1.orient){
 		case 0 : 
-			test = ((blockTest(blocks, bf.posMat.x, bf.posMat.y + 1)) || (blockTest(blocks, bf.posMat.x - 1, bf.posMat.y +1)) || (bf.posMat.y < HEIGHTMAT - 1));
+			test = ((blockTest(player, player.bf1.posMat.x, player.bf1.posMat.y + 1)) || (blockTest(player, player.bf1.posMat.x - 1, player.bf1.posMat.y +1)) || (player.bf1.posMat.y < HEIGHTMAT - 1));
 		break;
 		case 2 : 
-			test = ((blockTest(blocks, bf.posMat.x, bf.posMat.y + 1)) || (blockTest(blocks , bf.posMat.x + 1, bf.posMat.y + 1)) || (bf.posMat.y < HEIGHTMAT -1));
+			test = ((blockTest(player, player.bf1.posMat.x, player.bf1.posMat.y + 1)) || (blockTest(player, player.bf1.posMat.x + 1, player.bf1.posMat.y + 1)) || (player.bf1.posMat.y < HEIGHTMAT -1));
 		break;
 		case 1 : 
-			test = ((blockTest(blocks, bf.posMat.x, bf.posMat.y + 1)) || (bf.posMat.y < HEIGHTMAT -1));
+			test = ((blockTest(player, player.bf1.posMat.x, player.bf1.posMat.y + 1)) || (player.bf1.posMat.y < HEIGHTMAT -1));
 		break;
 		case 3 : 
-			test = ((blockTest(blocks, bf.posMat.x, bf.posMat.y +2)) || (bf.posMat.y +1 < HEIGHTMAT -1));
+			test = ((blockTest(player, player.bf1.posMat.x, player.bf1.posMat.y +2)) || (player.bf1.posMat.y +1 < HEIGHTMAT -1));
 		break;
 	}
 	return test;
@@ -198,8 +198,8 @@ void checkAllChains(Block mat[WIDTHMAT][HEIGHTMAT]) {
 	}
 }
 
-bool blockAtStart (Block blocks[WIDTHMAT][HEIGHTMAT]) {
-	return (blockTest(blocks,0,(WIDTHMAT/2 -1)) || blockTest(blocks,0,WIDTHMAT/2));
+bool blockAtStart (const Player& player) {
+	return (blockTest(player,0,(WIDTHMAT/2 -1)) || blockTest(player,0,WIDTHMAT/2));
 }
 
 int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
@@ -348,7 +348,7 @@ int main() {
 		
 		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
 		
-		if (!continueFall(game.p1.blocks, game.p1.bf1)) {
+		if (!continueFall(game.p1)) {
 			blockDown(game.p1);
 			doGravityOnAll(game.p1);
 			do {
@@ -363,7 +363,7 @@ int main() {
 				setMalusOnPlayer(game.p1, penaltyReps1);
 				penaltyReps1 = 0; 
 			}
-			if (!blockAtStart(game.p1.blocks)) {
+			if (!blockAtStart(game.p1)) {
 				doStartTourPlayer1 = true; 
 			} else {
 				gameOver = true;
@@ -381,7 +381,7 @@ int main() {
 		
 		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
 		
-		if (!continueFall(game.p2.blocks, game.p2.bf1)) {
+		if (!continueFall(game.p2) {
 			blockDown(game.p2);
 			doGravityOnAll(game.p2);
 			do {
@@ -396,7 +396,7 @@ int main() {
 				setMalusOnPlayer(game.p2, penaltyReps2);
 				penaltyReps2 = 0; 
 			}
-			if (!blockAtStart(game.p2.blocks)) {
+			if (!blockAtStart(game.p2)) {
 				doStartTourPlayer2 = true; 
 			} else {
 				gameOver = true;
