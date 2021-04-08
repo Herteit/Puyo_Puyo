@@ -146,7 +146,7 @@ void doGravityOnAll (Player& player) {
 	}
 }
 
-bool continueFall((const Player& player) {
+bool continueFall(const Player& player) {
 	bool test;
 	switch(player.bf1.orient){
 		case 0 : 
@@ -381,7 +381,7 @@ int main() {
 		
 		//la gravité sur le block qui tombe qui du coup n'est pas dogravityonall parce que *affichage*
 		
-		if (!continueFall(game.p2) {
+		if (!continueFall(game.p2)) {
 			blockDown(game.p2);
 			doGravityOnAll(game.p2);
 			do {
