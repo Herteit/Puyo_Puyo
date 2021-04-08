@@ -130,6 +130,15 @@ bool blockTest(const Player& player, int i, int j) {
 	return !player.blocks[i][j].exist;
 }
 
+void doGravityOnBlockFall (Player& player){
+	assert(0 <= player.bf1.posMat.y && player.bf1.posMat.y < HEIGHTMAT - 1);
+	player.bf1.posMat.y --;
+	player.blocks[player.bf1.posMat.y][player.bf1.posMat.y].exist = true ;
+	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y].color = player.bf1.color1 ;
+	player.blocks[player.bf1.posMat.y][player.bf1.posMat.y-1].exist = false ;
+	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y-1].color = VOID;
+}
+
 void doGravityOnAll (Player& player) {
 	int i, j, k;
 	for (i = 0; i < WIDTHMAT -1; i++) {
