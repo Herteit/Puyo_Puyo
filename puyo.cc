@@ -11,10 +11,19 @@ const int NBCOLORS = 5;
 const int HEIGHT = 600;
 const int WIDTH = 900;
 const int FALLSPEED = 10;
+const int SIZEPUYO = 1/30 * WIDTH;
+const int WIDTHMAT = 6;
+const int HEIGHTMAT = 12; 
+const int WAITINGPOSX = WIDTH /2 - SIZEPUYO;
+const int WAITINGPOSY = 100;
 
-const int SIZEPUYO = 1/30 * WIDTH, WIDTHMAT = 6, HEIGHTMAT = 12, WAITINGPOSX = WIDTH /2 - SIZEPUYO, WAITINGPOSY = 100;
-
-const char VOID = 'v', WHITE = 'w', RED = 'r', YELLOW = 'y', BLUE = 'b', GREEN = 'g', PURPLE = 'p';
+const char VOID = 'v';
+const char WHITE = 'w';
+const char RED = 'r';
+const char YELLOW = 'y';
+const char BLUE = 'b';
+const char GREEN = 'g';
+const char PURPLE = 'p';
 
 const float DELAY = 0.2f;
 
@@ -263,8 +272,16 @@ int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 int main() {
 
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
-	bool doStartTourPlayer1 = true, doStartTourPlayer2 = true, gameOver = false, up = false, left = false, right=false, down=false; 
-	int penaltyReps1, penaltyReps2, nbCombinations; 
+	bool doStartTourPlayer1 = true;
+	bool doStartTourPlayer2 = true; 
+	bool gameOver = false;
+	bool up = false;
+	bool left = false;
+	bool right=false;
+	bool down=false; 
+	int penaltyReps1;
+	int penaltyReps2;
+	int nbCombinations; 
 	Game game ;
 	sf::Clock clock; 
 
