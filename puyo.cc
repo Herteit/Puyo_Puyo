@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <cassert>
 #include <random>
 #include <math.h>
 #include <iostream>
@@ -6,11 +7,16 @@ using namespace std;
 using namespace sf;
 
 //on définit les constantes hors du main pour ne pas avoir à les appeler à chaque fois qu'elles sont utilisées dans un programme
-const int NBCOLORS = 5, HEIGHT = 600, WIDTH = 900, FALLSPEED = 10;
+const int NBCOLORS = 5;
+const int HEIGHT = 600;
+const int WIDTH = 900;
+const int FALLSPEED = 10;
+
 const int SIZEPUYO = 1/30 * WIDTH, WIDTHMAT = 6, HEIGHTMAT = 12, WAITINGPOSX = WIDTH /2 - SIZEPUYO, WAITINGPOSY = 100;
 
 const char VOID = 'v', WHITE = 'w', RED = 'r', YELLOW = 'y', BLUE = 'b', GREEN = 'g', PURPLE = 'p';
 
+const float DELAY = 0.2f;
 
 struct Pos {
 	int x ;
@@ -53,7 +59,7 @@ struct Math {
 };
 
 //initBlockFall
-void initBlockFall(BlockFall bf1, BlockFall bf2) {
+void initBlockFall(BlockFall& bf1, const BlockFall& bf2) {
 	bf1.orient = 2;
 	bf1.color1 = bf2.color1;
 	bf1.color2 = bf2.color2;
@@ -92,35 +98,39 @@ int random0toNb (int nb) {
 }
 
 //randBlockFall
-void randBlockFall (BlockFall randBlock) {
+BlockFall randBlockFall() {
+    BlockFall randBlock;
 	randBlock.orient = 3;
 	randBlock.color1 = switchColor(random0toNb(NBCOLORS));
 	randBlock.color2 = switchColor(random0toNb(NBCOLORS));
 	randBlock.speed = FALLSPEED;
+    return randBlock;
 }
 
 
-void startTour(Player p1) {
+void startTour(Player& p1) {
 	initBlockFall(p1.bf1, p1.bf2);
-	randBlockFall(p1.bf2);
+	p1.bf2 = randBlockFall();
 	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].color = p1.bf1.color1;
 	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].exist = true;
 }
 
-bool blockTest(Block mat[WIDTHMAT][HEIGHTMAT], int i, int j) {
-	return (mat[i][j].exist == false);
+bool blockTest(const Player& player, int i, int j) {
+    assert(0 <= i && i < WIDTHMAT);
+    assert(0 <= j && j < HEIGHTMAT);
+	return !player.blocks[i][j].exist;
 }
 
-void doGravityOnAll (Block blocks[WIDTHMAT][HEIGHTMAT]) {
+void doGravityOnAll (Player& player) {
 	int i, j, k;
 	for (i = 0; i < WIDTHMAT -1; i++) {
 		for (j = 0; j<HEIGHTMAT-1;j++){
-			if (blockTest(blocks , i+1, j)){
+			if (blockTest(player, i+1, j)){
 				for (k = j; k>=0; k--) {
-					blocks[i+1][j].exist = blocks[i][j].exist ;
-					blocks[i+1][j].color = blocks[i][j].color ;
-					blocks[i][j].exist = false ;
-					blocks[i][j].color = VOID;
+					player.blocks[i+1][j].exist = player.blocks[i][j].exist ;
+					player.blocks[i+1][j].color = player.blocks[i][j].color ;
+					player.blocks[i][j].exist = false ;
+					player.blocks[i][j].color = VOID;
 				}
 			}
 		}
@@ -202,7 +212,7 @@ void setMalusOnPlayer (Player p1, int reps) {
 		if (p1.blocks[0][nb].exist == false) {
 			p1.blocks[i][0].color = WHITE ;
 			p1.blocks[i][0].exist = true ; 
-			doGravityOnAll(p1.blocks);		
+			doGravityOnAll(p1);		
 		}
 	}
 }
@@ -258,6 +268,7 @@ int main() {
 	Game game ;
 	sf::Clock clock; 
 
+    float delay = 0;
 	
 	//boucle principale 
 	while (window.isOpen()) {
@@ -297,7 +308,18 @@ int main() {
 			}
 
 		}
+		
 		//mise jour de l'état du jeu 
+		float dt = clock.restart().asSeconds();
+		
+        delay += dt;
+        
+        if (delay > DELAY) {
+            // TODO: faire tomber les pièces d'une case
+            
+            delay -= DELAY;
+        }
+        
 		
 		//1er joueur
 		if (doStartTourPlayer1) {
@@ -311,11 +333,11 @@ int main() {
 		
 		if (!continueFall(game.p1.blocks, game.p1.bf1)) {
 			blockDown(game.p1);
-			doGravityOnAll(game.p1.blocks);
+			doGravityOnAll(game.p1);
 			do {
 				checkAllChains(game.p1.blocks);
 				nbCombinations = destroyBlock(game.p1.blocks);
-				doGravityOnAll(game.p1.blocks); 
+				doGravityOnAll(game.p1); 
 				if (nbCombinations > 0) {
 					penaltyReps2 += pow(2, nbCombinations);
 				}
@@ -344,11 +366,11 @@ int main() {
 		
 		if (!continueFall(game.p2.blocks, game.p2.bf1)) {
 			blockDown(game.p2);
-			doGravityOnAll(game.p2.blocks);
+			doGravityOnAll(game.p2);
 			do {
 				checkAllChains(game.p2.blocks);
 				nbCombinations = destroyBlock(game.p2.blocks);
-				doGravityOnAll(game.p2.blocks); 
+				doGravityOnAll(game.p2); 
 				if (nbCombinations > 0) {
 					penaltyReps1 += pow(2, nbCombinations);
 				}
