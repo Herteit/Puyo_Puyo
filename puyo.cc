@@ -58,7 +58,7 @@ struct Game {
 	Player p2; 
 };
 
-//cette structure est là pour avoir une fonction Math::random (bon pour l'instant elle marche pas)
+//cette structure est là pour avoir une fonction Math::random
 struct Math {
   static float random() {
     static mt19937 engine(time(nullptr));
