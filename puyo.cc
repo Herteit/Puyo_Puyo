@@ -203,7 +203,7 @@ void checkAllChains(Block mat[WIDTHMAT][HEIGHTMAT]) {
 }
 
 bool blockAtStart (const Player& player) {
-	return (!player.blocks[0][WIDTHMAT/2 - 1] || !player.blocks[0][WIDTHMAT/2];
+	return (!player.blocks[0][WIDTHMAT/2 - 1].exist || !player.blocks[0][WIDTHMAT/2].exist;
 }
 
 int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
