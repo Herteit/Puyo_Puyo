@@ -157,15 +157,29 @@ bool continueFall(const Player& player) {
 	bool test;
 	switch(player.bf1.orient){
 		case 0 : 
+			assert(0 <= player.bf1.posMat.x - 1);
+			assert(WIDTHMAT> player.bf1.posMat.x - 1);
+			assert(0 <= player.bf1.posMat.y + 1);
+			assert(HEIGHTMAT> player.bf1.posMat.y + 1);
 			test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist || !player.blocks[player.bf1.posMat.x - 1][player.bf1.posMat.y + 1].exist || (player.bf1.posMat.y < HEIGHTMAT - 1));
 		break;
 		case 2 : 
+			assert(0 <= player.bf1.posMat.x + 1);
+			assert(WIDTHMAT> player.bf1.posMat.x + 1);
+			assert(0 <= player.bf1.posMat.y + 1);
+			assert(HEIGHTMAT> player.bf1.posMat.y + 1);
 			test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist || !player.blocks[player.bf1.posMat.x + 1][player.bf1.posMat.y + 1].exist || (player.bf1.posMat.y < HEIGHTMAT - 1));
 		break;
 		case 1 : 
+			assert(0 <= player.bf1.posMat.y + 1);
+			assert(HEIGHTMAT> player.bf1.posMat.y + 1);
 			test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist || (player.bf1.posMat.y < HEIGHTMAT - 1));
 		break;
 		case 3 : 
+			assert(0 <= player.bf1.posMat.y + 1);
+			assert(HEIGHTMAT> player.bf1.posMat.y + 1);
+			assert(0 <= player.bf1.posMat.y + 2);
+			assert(HEIGHTMAT> player.bf1.posMat.y + 2);
 			test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 2].exist || (player.bf1.posMat.y + 1 < HEIGHTMAT - 1));
 		break;
 	}
