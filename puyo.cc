@@ -126,8 +126,9 @@ void startTour(Player& p1) {
 
 
 void doGravityOnBlockFall (Player& player){
-	assert(0 <= player.bf1.posMat.y && player.bf1.posMat.y < HEIGHTMAT - 1);
-	player.bf1.posMat.y --;
+	assert(0 <= player.bf1.posMat.y);
+	assert(player.bf1.posMat.y < HEIGHTMAT - 1);
+	player.bf1.posMat.y ++;
 	player.blocks[player.bf1.posMat.y][player.bf1.posMat.y].exist = true ;
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y].color = player.bf1.color1 ;
 	player.blocks[player.bf1.posMat.y][player.bf1.posMat.y-1].exist = false ;
@@ -138,12 +139,14 @@ void doGravityOnAll (Player& player) {
 	int i, j, k;
 	for (i = 0; i < WIDTHMAT -1; i++) {
 		for (j = 0; j<HEIGHTMAT-1;j++){
-			if (!player.blocks[i+1][j].exist){
+			if (!player.blocks[i][j+1].exist){
 				for (k = j; k>=0; k--) {
-					player.blocks[i+1][j].exist = player.blocks[i][j].exist ;
-					player.blocks[i+1][j].color = player.blocks[i][j].color ;
-					player.blocks[i][j].exist = false ;
-					player.blocks[i][j].color = VOID;
+					assert(k>=0);
+					assert(k<HEIGHTMAT-1);
+					player.blocks[i][k+1].exist = player.blocks[i][k].exist ;
+					player.blocks[i][k+1].color = player.blocks[i][k].color ;
+					player.blocks[i][k].exist = false ;
+					player.blocks[i][k].color = VOID;
 				}
 			}
 		}
@@ -172,20 +175,20 @@ bool continueFall(const Player& player) {
 void blockDown (Player p1) {
 	switch (p1.bf1.orient) {
 		case 0 : { 
-			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].color = p1.bf1.color2;
-			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist = true;
+			p1.blocks[p1.bf1.posMat.x-1][p1.bf1.posMat.y].color = p1.bf1.color2;
+			p1.blocks[p1.bf1.posMat.x-1][p1.bf1.posMat.y].exist = true;
 		} break;
 		case 2 : {
-			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].color = p1.bf1.color2;
-			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist = true;
+			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].color = p1.bf1.color2;
+			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].exist = true;
 		} break;
 		case 1 : {
-			p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].color = p1.bf1.color2;
-			p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist = true;
+			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y-1].color = p1.bf1.color2;
+			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y-1].exist = true;
 		} break;
 		case 3 : {
-			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].color = p1.bf1.color2;
-			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist = true;
+			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].color = p1.bf1.color2;
+			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].exist = true;
 		} break;
 	}
 }
@@ -236,21 +239,29 @@ void resetBlocksForID (Block block[WIDTHMAT][HEIGHTMAT], int ID) {
 			if (block[i][j].groupID == ID && block[i][j].color != WHITE) {
 				block[i][j].exist = false ;
 				block[i][j].color = VOID ; 
-				if (block[i][j+1].color == WHITE) {
-					block[i][j+1].exist = false ; 
-					block[i][j+1].color = VOID ; 
+				if (block[i][j+1].exist){
+					if (block[i][j+1].color == WHITE) {
+						block[i][j+1].exist = false ; 
+						block[i][j+1].color = VOID ; 
+					}
 				}
-				if (block[i][j-1].color == WHITE) {
-					block[i][j-1].exist = false ; 
-					block[i][j-1].color = VOID ; 
+				if (block[i][j-1].exist){
+					if (block[i][j-1].color == WHITE) {
+						block[i][j-1].exist = false ; 
+						block[i][j-1].color = VOID ; 
+					}
 				}
-				if (block[i-1][j].color == WHITE) {
-					block[i-1][j].exist = false ; 
-					block[i-1][j].color = VOID ; 
+				if (block[i-1][j].exist){
+					if (block[i-1][j].color == WHITE) {
+						block[i-1][j].exist = false ; 
+						block[i-1][j].color = VOID ; 
+					}
 				}
-				if (block[i+1][j].color == WHITE) {
-					block[i+1][j].exist = false ; 
-					block[i+1][j].color = VOID ; 
+				if (block[i+1][j].exist){
+					if (block[i+1][j].color == WHITE) {
+						block[i+1][j].exist = false ; 
+						block[i+1][j].color = VOID ; 
+					}
 				}
 			}
 		}
