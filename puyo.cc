@@ -138,7 +138,7 @@ void doGravityOnAll (Player& player) {
 	int i, j, k;
 	for (i = 0; i < WIDTHMAT -1; i++) {
 		for (j = 0; j<HEIGHTMAT-1;j++){
-			if (!player.blocks[i+1][j].exist{
+			if (!player.blocks[i+1][j].exist){
 				for (k = j; k>=0; k--) {
 					player.blocks[i+1][j].exist = player.blocks[i][j].exist ;
 					player.blocks[i+1][j].color = player.blocks[i][j].color ;
@@ -203,7 +203,7 @@ void checkAllChains(Block mat[WIDTHMAT][HEIGHTMAT]) {
 }
 
 bool blockAtStart (const Player& player) {
-	return (!player.blocks[0][WIDTHMAT/2 - 1].exist || !player.blocks[0][WIDTHMAT/2].exist;
+	return (!player.blocks[0][WIDTHMAT/2 - 1].exist || !player.blocks[0][WIDTHMAT/2].exist);
 }
 
 int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
