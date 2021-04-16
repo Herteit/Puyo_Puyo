@@ -264,25 +264,25 @@ void resetBlocksForID (Block block[WIDTHMAT][HEIGHTMAT], int ID) {
 			if (block[i][j].groupID == ID && block[i][j].color != WHITE) {
 				block[i][j].exist = false ;
 				block[i][j].color = VOID ; 
-				if (block[i][j+1].exist){
+				if (j+1 < HEIGHTMAT){
 					if (block[i][j+1].color == WHITE) {
 						block[i][j+1].exist = false ; 
 						block[i][j+1].color = VOID ; 
 					}
 				}
-				if (block[i][j-1].exist){
+				if (j-1 > 0){
 					if (block[i][j-1].color == WHITE) {
 						block[i][j-1].exist = false ; 
 						block[i][j-1].color = VOID ; 
 					}
 				}
-				if (block[i-1][j].exist){
+				if (i-1 > 0){
 					if (block[i-1][j].color == WHITE) {
 						block[i-1][j].exist = false ; 
 						block[i-1][j].color = VOID ; 
 					}
 				}
-				if (block[i+1][j].exist){
+				if (i+1 < WIDTHMAT){
 					if (block[i+1][j].color == WHITE) {
 						block[i+1][j].exist = false ; 
 						block[i+1][j].color = VOID ; 
