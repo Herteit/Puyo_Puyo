@@ -222,14 +222,46 @@ void blockDown (Player p1) {
 	}
 }
 
-//AttribuerGroupe - Anton
+//AttribuerGroupe -  a verifié le telechargement de l'ide sur mon ordi portable est toujours pas fini 
+int AttribuerGroupe ( Block mat[WIDTHMAT][HEIGHTMAT] , Position posBlock ,  int groupID ){
+	int x, y
+	int longueurChaine=0
+	for (int i = 0; i < 4; i++){
+		if (i%2 == 0){
+			x = posBlock.x +i -1
+			y = posBlock.y
+		} else {
+			x = posBlock.x
+			y = posBlock.y +i -2
+		}
+		if (x >= 0 && x < longueur (2 , Mat ) && y >= 0 && y < longueur (1 , Mat )) && y >= 0 && y < longueur (1 , Mat ))  {
+			if ( Mat[y][x].exist ) {
+				if ( Mat[posBlock.y][posBlock.x].couleur == Mat[y][x].couleur && Mat[y][x].groupID == 0) {
+					Mat[y][x].groupID = groupID
+					Position pos = new Position ()
+					pos.x = x
+					pos.y = y
+					longueurChaine += (1 + AttribuerGroupe ( Mat ,pos , groupID ))
+				}
+			}
+		}
+	return longueurChaine ;
+}
 
-//checkAllChains - Anton not finito
-void checkAllChains(Block mat[WIDTHMAT][HEIGHTMAT]) {
+//checkAllChains , a verifié le telechargement de l'ide sur mon ordi portable est toujours pas fini 
+void checkAllChains ( Block mat[WIDTHMAT][HEIGHTMAT]) {
 	int baseGroupId = 1;
 	for (int i = 0; i < WIDTHMAT; i++) {
 		for (int j = 0; j < HEIGHTMAT; j++) {
-
+			if ((mat[i][j].exist && mat[i][j].groupID == 0) {
+				Position pos = new Position ();
+				pos.x = j;
+				pos.y = i;
+				int longueur = AttribuerGroupe (mat ,pos ,baseGroupId ) ;
+				if (longueur > 0) {
+				baseGroupId += 1 ;
+				}
+			}
 		}
 	}
 }
