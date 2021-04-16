@@ -185,8 +185,8 @@ bool continueFall(const Player& player) {
 		case DOWN : 
 			assert(0 <= player.bf1.posMat.y + 1);
 			assert(HEIGHTMAT> player.bf1.posMat.y + 2);
-			if (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 2].exist){
-				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 2].exist || (player.bf1.posMat.y + 1 < HEIGHTMAT - 1));
+			if (player.bf1.posMat.y + 1 < HEIGHTMAT - 1){
+				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 2].exist);
 			}
 		break;
 	}
