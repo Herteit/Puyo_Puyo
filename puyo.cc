@@ -3,6 +3,7 @@
 #include <random>
 #include <math.h>
 #include <iostream>
+#include <stdio.h>
 using namespace std;
 using namespace sf;
 
@@ -29,7 +30,7 @@ const char BLUE = 'b';
 const char GREEN = 'g';
 const char PURPLE = 'p';
 
-const float DELAY = 0.2f;
+const float DELAY = 0.01f;
 
 struct Pos {
 	int x ;
@@ -79,6 +80,8 @@ void initBlockFall(BlockFall& bf1, const BlockFall& bf2) {
 	bf1.posMat.x = WIDTHMAT /2 -1;
 	bf1.posMat.y = 0;
 	bf1.speed = bf2.speed;
+	printf ("initBlockFall x : %d \n", bf1.posMat.x);
+	printf ("initBlockFall y : %d \n", bf1.posMat.y);
 }
 
 char switchColor (int nb) {
@@ -130,6 +133,9 @@ void startTour(Player& p1) {
 
 
 void doGravityOnBlockFall (Player& player){
+	printf ("doGravOnBF \n");
+	printf ("begin doGravityOnBlockFall x : %d \n", player.bf1.posMat.x);
+	printf ("begin doGravityOnBlockFall y : %d \n", player.bf1.posMat.y);
 	assert(0 <= player.bf1.posMat.y);
 	assert(player.bf1.posMat.y < HEIGHTMAT - 1);
 	player.bf1.posMat.y ++;
@@ -137,6 +143,8 @@ void doGravityOnBlockFall (Player& player){
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y].color = player.bf1.color1 ;
 	player.blocks[player.bf1.posMat.y][player.bf1.posMat.y-1].exist = false ;
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y-1].color = VOID;
+	printf ("doGravityOnBlockFall x : %d \n", player.bf1.posMat.x);
+	printf ("doGravityOnBlockFall y : %d \n", player.bf1.posMat.y);
 }
 
 void doGravityOnAll (Player& player) {
@@ -159,6 +167,7 @@ void doGravityOnAll (Player& player) {
 
 bool continueFall(const Player& player) {
 	bool test = false;
+	printf ("orient : %d \n", player.bf1.orient);
 	switch(player.bf1.orient){
 		case LEFT : 
 			assert(0 <= player.bf1.posMat.x - 1);
@@ -173,7 +182,16 @@ bool continueFall(const Player& player) {
 			assert(WIDTHMAT> player.bf1.posMat.x + 1);
 			assert(0 <= player.bf1.posMat.y + 1);
 			if (player.bf1.posMat.y < HEIGHTMAT - 1){
-				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist || !player.blocks[player.bf1.posMat.x + 1][player.bf1.posMat.y + 1].exist);
+				
+				if (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist ) {
+					printf ("1er");
+				}
+				if (!player.blocks[player.bf1.posMat.x + 1][player.bf1.posMat.y + 1].exist) {
+					printf ("2e");
+				}				
+				
+				
+				test = (player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist || player.blocks[player.bf1.posMat.x + 1][player.bf1.posMat.y + 1].exist);
 			}
 		break;
 		case UP : 
@@ -190,6 +208,10 @@ bool continueFall(const Player& player) {
 			}
 		break;
 	}
+	printf ("continueFall x : %d \n", player.bf1.posMat.x);
+	printf ("continueFall y : %d \n", player.bf1.posMat.y);
+	if (test)
+		printf ("block posé\n");
 	return test;
 }
 
@@ -374,34 +396,6 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
-			if (event.type == sf::Event::KeyPressed) {
-				if (event.key.code == sf::Keyboard::Left) {
-					left = true;
-				}
-				if (event.key.code == sf::Keyboard::Right) {
-					right = true;
-				}
-				if (event.key.code == sf::Keyboard::Up) {
-					up = true;
-				}
-				if (event.key.code == sf::Keyboard::Down) {
-					down = true;
-				}
-			}
-			if (event.type == sf::Event::KeyReleased) {
-				if (event.key.code == sf::Keyboard::Left) {
-					left = false;
-				}
-				if (event.key.code == sf::Keyboard::Right) {
-					right = false;
-				}
-				if (event.key.code == sf::Keyboard::Up) {
-					up = false;
-				}
-				if (event.key.code == sf::Keyboard::Down) {
-					down = false;
-				}
-			}
 
 		}
 		
@@ -410,8 +404,9 @@ int main() {
 		delayPlayer1 += dt;
 		delayPlayer2 += dt; 
         
-		
+		printf ("   nouveau tour    \n");
 		//1er joueur
+		printf ("player 1 \n");
 		if (doStartTourPlayer1) {
 			startTour(game.p1);
 			doStartTourPlayer1 = false;
@@ -419,14 +414,18 @@ int main() {
 		
 		//actions du joueur (j'ai la flemme de les faire)
 		
-		if (delayPlayer1 > DELAY) {	
+		if (delayPlayer1 > DELAY) {
+			printf ("delay 1 \n");	
 			doGravityOnBlockFall(game.p1);
 			delayPlayer1 -= DELAY;
 		}
 		
-		if (!continueFall(game.p1)) {
+		if (continueFall(game.p1)) {
+			printf ("bf en bas 1 \n");
 			blockDown(game.p1);
+			printf ("blockdown 1 \n");
 			doGravityOnAll(game.p1);
+			printf ("doGravOnAll 1 \n");
 			do {
 				checkAllChains(game.p1.blocks);
 				nbCombinations = destroyBlock(game.p1.blocks);
@@ -434,11 +433,15 @@ int main() {
 				if (nbCombinations > 0) {
 					penaltyReps2 += pow(2, nbCombinations);
 				}
+				printf ("nbComb 1 = %d \n", nbCombinations);
 			} while (nbCombinations > 0) ;
-			if (penaltyReps1 > 0) {
-				setMalusOnPlayer(game.p1, penaltyReps1);
+			printf ("end do 1 \n");
+			if (penaltyReps1 != 0) {
+				printf ("penalty\n");
+				// setMalusOnPlayer(game.p1, penaltyReps1);
 				penaltyReps1 = 0; 
 			}
+			printf ("end penalty 1\n");
 			if (!blockAtStart(game.p1)) {
 				doStartTourPlayer1 = true; 
 			} else {
@@ -448,6 +451,7 @@ int main() {
 		}
 		
 		//2e joueur
+		printf ("player 2 \n");
 		if (doStartTourPlayer2) {
 			startTour(game.p2);
 			doStartTourPlayer2 = false;
@@ -455,36 +459,48 @@ int main() {
 		
 		//actions du joueur 2 (j'ai la flemme de les faire)
 		
-		if (delayPlayer2 > DELAY) {		
+		if (delayPlayer2 > DELAY) {
+			printf ("delay2 \n");		
 			doGravityOnBlockFall(game.p2);
 			delayPlayer2 -= DELAY;
 		}
 		
 		if (!continueFall(game.p2)) {
+			printf("bf en bas\n");
 			blockDown(game.p2);
 			doGravityOnAll(game.p2);
 			do {
+				printf("start do \n");
 				checkAllChains(game.p2.blocks);
 				nbCombinations = destroyBlock(game.p2.blocks);
+				printf ("nbComb : %d \n", nbCombinations);
 				doGravityOnAll(game.p2); 
+				printf ("destroy Block 2\n");
 				if (nbCombinations > 0) {
 					penaltyReps1 += pow(2, nbCombinations);
 				}
+				printf ("penalty = %d \n", penaltyReps1);
 			} while (nbCombinations > 0) ;
+			printf ("sortie do \n");
 			if (penaltyReps2 > 0) {
+				printf ("penalty2 = %d \n", penaltyReps2);
 				setMalusOnPlayer(game.p2, penaltyReps2);
+				printf ("setMalus");
 				penaltyReps2 = 0; 
 			}
-			if (!blockAtStart(game.p2)) {
+			printf ("penalty 2 \n");
+			if (blockAtStart(game.p2)) {
 				doStartTourPlayer2 = true; 
 			} else {
 				gameOver = true;
 			}
+			printf ("end p2 \n");
 		
 		}
 
 	}
 	return 0 ;
 }
+
 
 
