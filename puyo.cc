@@ -137,9 +137,9 @@ void doGravityOnBlockFall (Player& player){
 	assert(0 <= player.bf1.posMat.y);
 	assert(player.bf1.posMat.y < HEIGHTMAT - 1);
 	player.bf1.posMat.y ++;
-	player.blocks[player.bf1.posMat.y][player.bf1.posMat.y].exist = true ;
+	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y].exist = true ;
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y].color = player.bf1.color1 ;
-	player.blocks[player.bf1.posMat.y][player.bf1.posMat.y-1].exist = false ;
+	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y-1].exist = false ;
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y-1].color = VOID;
 	printf ("doGravityOnBlockFall y : %d \n", player.bf1.posMat.y);
 }
@@ -187,7 +187,7 @@ bool continueFall(const Player& player) {
 				}				
 				
 				
-				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist || !player.blocks[player.bf1.posMat.x + 1][player.bf1.posMat.y + 1].exist);
+				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist && !player.blocks[player.bf1.posMat.x + 1][player.bf1.posMat.y + 1].exist);
 			}
 		break;
 		case UP : 
@@ -206,7 +206,7 @@ bool continueFall(const Player& player) {
 	}
 	printf ("continueFall: %d %d \n", player.bf1.posMat.x, player.bf1.posMat.y);
 	if (test)
-		printf ("block posé\n");
+		printf ("block peut continuer\n");
 	return test;
 }
 
@@ -286,7 +286,7 @@ void checkAllChains ( Block mat[WIDTHMAT][HEIGHTMAT]) {
 }
 
 bool blockAtStart (const Player& player) {
-	return (!player.blocks[0][WIDTHMAT/2 - 1].exist || !player.blocks[0][WIDTHMAT/2].exist);
+	return (player.blocks[WIDTHMAT/2 - 1][0].exist || player.blocks[WIDTHMAT/2][0].exist);
 }
 
 int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
@@ -384,7 +384,7 @@ int main() {
 	float delayPlayer2 = 0;
 	
 	//boucle principale 
-	while (window.isOpen()) {
+	while (window.isOpen()&&!gameOver) {
 		//actions du joueur
 		sf::Event event ; 
 		while (window.pollEvent(event)) {
@@ -400,6 +400,9 @@ int main() {
 		delayPlayer2 += dt; 
         
 		printf ("   nouveau tour    \n");
+
+
+		
 		//1er joueur
 		printf ("player 1 \n");
 		if (doStartTourPlayer1) {
@@ -408,11 +411,42 @@ int main() {
 		}
 		
 		//actions du joueur (j'ai la flemme de les faire)
-		
-		if (delayPlayer1 > DELAY) {
-			doGravityOnBlockFall(game.p1);
-			delayPlayer1 -= DELAY;
+		if (event.type == sf::Event::KeyPressed) {
+			if (event.key.code == sf::Keyboard::Left) {
+				left = true;
+			}
+			if (event.key.code == sf::Keyboard::Right) {
+				right = true;
+			}
+			if (event.key.code == sf::Keyboard::Up) {
+				up = true;
+			}
+			if (event.key.code == sf::Keyboard::Down) {
+				down = true;
+			}
 		}
+		if (event.type == sf::Event::KeyReleased) {
+			if (event.key.code == sf::Keyboard::Left) {
+				left = false;
+			}
+			if (event.key.code == sf::Keyboard::Right) {
+				right = false;
+			}
+			if (event.key.code == sf::Keyboard::Up) {
+				up = false;
+			}
+			if (event.key.code == sf::Keyboard::Down) {
+				down = false;
+			}
+		}
+		
+
+		//if (delayPlayer1 > DELAY) {
+		if (continueFall(game.p1)){
+			doGravityOnBlockFall(game.p1);
+		}
+		//	delayPlayer1 -= DELAY;
+		//}
 		
 		if (!continueFall(game.p1)) {
 			printf ("bf en bas 1 \n");
@@ -430,14 +464,22 @@ int main() {
 				// setMalusOnPlayer(game.p1, penaltyReps1);
 				penaltyReps1 = 0; 
 			}
-			if (!blockAtStart(game.p1)) {
+			if (!blockAtStart(game.p1)) { 
 				doStartTourPlayer1 = true; 
+				printf ("dostarttour = true \n");
 			} else {
 				gameOver = true;
+				printf ("gameOver = true \n");
 			}
-			printf ("end p1 \n");
+			printf ("end tour p1 \n");
 		}
+
+
 		
+		
+
+
+		/*
 		//2e joueur
 		printf ("player 2 \n");
 		if (doStartTourPlayer2) {
@@ -447,10 +489,10 @@ int main() {
 		
 		//actions du joueur 2 (j'ai la flemme de les faire)
 		
-		if (delayPlayer2 > DELAY) {
+		//if (delayPlayer2 > DELAY) {
 			doGravityOnBlockFall(game.p2);
-			delayPlayer2 -= DELAY;
-		}
+		//	delayPlayer2 -= DELAY;
+		//}
 		
 		if (!continueFall(game.p2)) {
 			printf("bf en bas 2\n");
@@ -475,7 +517,7 @@ int main() {
 			}
 			printf ("end p2 \n");
 		
-		}
+		}*/
 
 	}
 	return 0 ;
