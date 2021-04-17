@@ -170,7 +170,7 @@ bool continueFall(const Player& player) {
 			assert(WIDTHMAT> player.bf1.posMat.x - 1);
 			assert(0 <= player.bf1.posMat.y + 1);
 			if (player.bf1.posMat.y < HEIGHTMAT - 1){
-				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist || !player.blocks[player.bf1.posMat.x - 1][player.bf1.posMat.y + 1].exist);
+				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist && !player.blocks[player.bf1.posMat.x - 1][player.bf1.posMat.y + 1].exist);
 			}
 		break;
 		case RIGHT : 
@@ -399,12 +399,12 @@ int main() {
 		delayPlayer1 += dt;
 		delayPlayer2 += dt; 
         
-		printf ("   nouveau tour    \n");
+		printf ("    nouveau tour    \n");
 
 
-		
+
 		//1er joueur
-		printf ("player 1 \n");
+		printf ("  player 1 \n");
 		if (doStartTourPlayer1) {
 			startTour(game.p1);
 			doStartTourPlayer1 = false;
@@ -449,7 +449,7 @@ int main() {
 		//}
 		
 		if (!continueFall(game.p1)) {
-			printf ("bf en bas 1 \n");
+			printf ("bf descendu 1 \n");
 			blockDown(game.p1);
 			doGravityOnAll(game.p1);
 			do {
@@ -461,15 +461,15 @@ int main() {
 				}
 			} while (nbCombinations > 0) ;
 			if (penaltyReps1 != 0) {
-				// setMalusOnPlayer(game.p1, penaltyReps1);
+				//setMalusOnPlayer(game.p1, penaltyReps1);
 				penaltyReps1 = 0; 
 			}
 			if (!blockAtStart(game.p1)) { 
 				doStartTourPlayer1 = true; 
-				printf ("dostarttour = true \n");
+				printf ("dostarttour1 = true \n");
 			} else {
 				gameOver = true;
-				printf ("gameOver = true \n");
+				printf ("gameOver j1 = true \n");
 			}
 			printf ("end tour p1 \n");
 		}
@@ -477,11 +477,9 @@ int main() {
 
 		
 		
-
-
-		/*
+		
 		//2e joueur
-		printf ("player 2 \n");
+		printf ("  player 2 \n");
 		if (doStartTourPlayer2) {
 			startTour(game.p2);
 			doStartTourPlayer2 = false;
@@ -490,12 +488,14 @@ int main() {
 		//actions du joueur 2 (j'ai la flemme de les faire)
 		
 		//if (delayPlayer2 > DELAY) {
+		if (continueFall(game.p2)){
 			doGravityOnBlockFall(game.p2);
+		}
 		//	delayPlayer2 -= DELAY;
 		//}
 		
 		if (!continueFall(game.p2)) {
-			printf("bf en bas 2\n");
+			printf("bf descendu 2 \n");
 			blockDown(game.p2);
 			doGravityOnAll(game.p2);
 			do {
@@ -507,17 +507,18 @@ int main() {
 				}
 			} while (nbCombinations > 0) ;
 			if (penaltyReps2 > 0) {
-				setMalusOnPlayer(game.p2, penaltyReps2);
+				//setMalusOnPlayer(game.p2, penaltyReps2);
 				penaltyReps2 = 0; 
 			}
 			if (!blockAtStart(game.p2)) {
 				doStartTourPlayer2 = true; 
+				printf ("dostarttour2 = true \n");
 			} else {
 				gameOver = true;
+				printf ("gameOver j2 = true \n");
 			}
-			printf ("end p2 \n");
-		
-		}*/
+			printf ("end tour p2 \n");
+		}
 
 	}
 	return 0 ;
