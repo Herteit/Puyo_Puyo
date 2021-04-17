@@ -255,10 +255,10 @@ void checkAllChains ( Block mat[WIDTHMAT][HEIGHTMAT]) {
 	int baseGroupId = 1;
 	for (int i = 0; i < WIDTHMAT; i++) {
 		for (int j = 0; j < HEIGHTMAT; j++) {
-			if ((mat[i][j].exist && mat[i][j].groupID == 0) {
+			if (mat[i][j].exist && mat[i][j].groupID == 0) {
 				Pos pos;
-				pos.x = i
-				pos.y = j
+				pos.x = i;
+				pos.y = j;
 				int longueur = AttribuerGroupe (mat ,pos ,baseGroupId ) ;
 				if (longueur > 0) {
 				baseGroupId += 1 ;
