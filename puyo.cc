@@ -294,7 +294,7 @@ int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
 	int nb = 0; 
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
 		for (int j = 0 ; j < HEIGHTMAT ; j++) {
-			if (mat[i][j].groupID == ID) {
+			if (mat[i][j].groupID == ID && mat[i][j].color != VOID && mat[i][j].color != WHITE) {
 				nb ++ ;
 			}
 		}
