@@ -365,18 +365,46 @@ int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 	return nbrChain ; 
 }
 
-void mat2S(Block mat[WIDTHMAT][HEIGHTMAT]) {
-		for (int i = 0; i < WIDTHMAT; i++) {
-			printf ("[");
-			for (int j = 0; j < HEIGHTMAT; j++) {
-				printf ("%c", mat[i][j].color);
-				if (j!=HEIGHTMAT-1) {
-					printf ("\t");
-				}
-			}
-			printf ("]\n");
+void mat2S(Player p) {
+	//determination emplacement 2nd partie du bf
+	Pos pos;
+	pos.x = p.bf1.posMat.x;
+	pos.y = p.bf1.posMat.y;
+	switch (p.bf1.orient) {
+		case RIGHT : {
+			pos.x = p.bf1.posMat.x + 1;
+			break;
+		}
+		case LEFT : {
+			pos.x = p.bf1.posMat.x - 1;
+			break;
+		}
+		case UP : {
+			pos.y = p.bf1.posMat.y - 1;
+			break;
+		}
+		case DOWN : {
+			pos.y = p.bf1.posMat.y + 1;
+			break;
 		}
 	}
+
+	//affichage de la matrice avec la 2nd partie du bf
+	for (int i = 0; i < WIDTHMAT; i++) {
+		printf ("[");
+		for (int j = 0; j < HEIGHTMAT; j++) {
+			if (pos.x == i && pos.y == j) {
+				printf ("%c", p.bf1.color2);
+			} else {
+				printf ("%c", p.blocks[i][j].color);
+			}
+			if (j!=HEIGHTMAT-1) {
+				printf ("\t");
+			}
+		}
+		printf ("]\n");
+	}
+}
 
 void left(Player& p1) {
 	int dep = false;
@@ -461,7 +489,7 @@ void startGame(Game& game){
 		}
 	}
 	//initialisation bf
-	game.p2.bf2=randBlockFall();
+	game.p2.bf2=game.p1.bf2;
 }
 
 
@@ -664,7 +692,7 @@ int main() {
 			printf ("end tour p1 \n");
 		}
 
-		mat2S(game.p1.blocks);
+		mat2S(game.p1);
 
 
 
@@ -760,7 +788,7 @@ int main() {
 			printf ("end tour p2 \n");
 		}
 		
-		mat2S(game.p2.blocks);
+		mat2S(game.p2);
 		
 
 	}
