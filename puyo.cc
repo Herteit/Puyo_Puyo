@@ -116,8 +116,8 @@ int random0toNb (int nb) {
 BlockFall randBlockFall() {
     BlockFall randBlock;
 	randBlock.orient = DOWN;
-	randBlock.color1 = switchColor(random0toNb(NBCOLORS));
-	randBlock.color2 = switchColor(random0toNb(NBCOLORS));
+	randBlock.color1 = switchColor(random0toNb(NBCOLORS-1));
+	randBlock.color2 = switchColor(random0toNb(NBCOLORS-1));
 	randBlock.speed = FALLSPEED;
     return randBlock;
 }
@@ -223,6 +223,7 @@ void blockDown (Player p1) {
 			assert(p1.bf1.posMat.x+1<HEIGHTMAT);
 			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].color = p1.bf1.color2;
 			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].exist = true;
+			printf("blockfall implanté \n");
 		} break;
 		case UP : {
 			assert(p1.bf1.posMat.y-1>=0);
@@ -364,6 +365,26 @@ int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 	return nbrChain ; 
 }
 
+static String mat2S(Block mat[WIDTHMAT][HEIGHTMAT]) {
+		String chaine = " " + '\n';
+		for (int i = 0; i < WIDTHMAT; i++) {
+			printf ("[");
+			//chaine = chaine + "[" ;
+			for (int j = 0; j < HEIGHTMAT; j++) {
+				printf ("%c", mat[i][j].color);
+				//chaine = chaine + mat[i][j].color;
+				if (j!=HEIGHTMAT-1) {
+					printf ("\t");
+					//chaine = chaine + "\t";
+				}
+			}
+			printf ("]\n");
+			//chaine = chaine + "]" +"\n";
+		}
+		return chaine;
+		
+	}
+
 int main() {
 
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
@@ -382,7 +403,23 @@ int main() {
 
 	float delayPlayer1 = 0;
 	float delayPlayer2 = 0;
-	
+
+
+//future fonction startGame (pour l'instant que pour le joueur 1)
+
+//on tente une initialisation de la matrice	
+	for (int i = 0; i < WIDTHMAT; i++) {
+		for (int j = 0; j < HEIGHTMAT; j++) {
+			game.p1.blocks[i][j].color = VOID;
+			game.p1.blocks[i][j].exist = false;
+		}
+	}
+//on va aussi initialiser le bf
+	game.p1.bf2=randBlockFall();
+
+
+
+
 	//boucle principale 
 	while (window.isOpen()&&!gameOver) {
 		//actions du joueur
@@ -451,7 +488,7 @@ int main() {
 		if (!continueFall(game.p1)) {
 			printf ("bf descendu 1 \n");
 			blockDown(game.p1);
-			doGravityOnAll(game.p1);
+/*			doGravityOnAll(game.p1);
 			do {
 				checkAllChains(game.p1.blocks);
 				nbCombinations = destroyBlock(game.p1.blocks);
@@ -464,7 +501,7 @@ int main() {
 				//setMalusOnPlayer(game.p1, penaltyReps1);
 				penaltyReps1 = 0; 
 			}
-			if (!blockAtStart(game.p1)) { 
+*/			if (!blockAtStart(game.p1)) { 
 				doStartTourPlayer1 = true; 
 				printf ("dostarttour1 = true \n");
 			} else {
@@ -474,8 +511,9 @@ int main() {
 			printf ("end tour p1 \n");
 		}
 
+		String chaine = mat2S(game.p1.blocks);
 
-		
+		//printf("%s", chaine);
 		
 		
 		//2e joueur
