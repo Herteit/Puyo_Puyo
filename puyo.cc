@@ -391,10 +391,21 @@ int main() {
 	bool doStartTourPlayer1 = true;
 	bool doStartTourPlayer2 = true; 
 	bool gameOver = false;
-	bool up1 = false;
-	bool left1 = false;
-	bool right1 = false;
-	bool down1 = false; 
+	bool oup1 = false;
+	bool oleft1 = false;
+	bool oright1 = false;
+	bool odown1 = false; 
+	bool mleft1 = false;
+	bool mright1 = false;
+	bool mdown1 = false; 
+	bool oup2 = false;
+	bool oleft2 = false;
+	bool oright2 = false;
+	bool odown2 = false;
+	bool mleft2 = false;
+	bool mright2 = false;
+	bool mdown2 = false; 
+	bool depleft1 = false;
 	int penaltyReps1;
 	int penaltyReps2;
 	int nbCombinations; 
@@ -429,23 +440,58 @@ int main() {
 				window.close();
 			}
 			if (event.type == sf::Event::KeyPressed) {
+				//j1
 				if (event.key.code == sf::Keyboard::Left) {
-					left1 = true;
+					oleft1 = true;
 				}
 				if (event.key.code == sf::Keyboard::Right) {
-					right1 = true;
+					oright1 = true;
 				}
 				if (event.key.code == sf::Keyboard::Up) {
-					up1 = true;
+					oup1 = true;
 				}
 				if (event.key.code == sf::Keyboard::Down) {
-					down1 = true;
+					odown1 = true;
+				}
+				if (event.key.code == sf::Keyboard::K) {
+					mleft1 = true;
+				}
+				if (event.key.code == sf::Keyboard::L) {
+					mdown1 = true;
+				}
+				if (event.key.code == sf::Keyboard::M) {
+					mright1 = true;
+				}
+				//j2
+				if (event.key.code == sf::Keyboard::Q) {
+					oleft2 = true;
+				}
+				if (event.key.code == sf::Keyboard::D) {
+					oright2 = true;
+				}
+				if (event.key.code == sf::Keyboard::Z) {
+					oup2 = true;
+				}
+				if (event.key.code == sf::Keyboard::S) {
+					odown2 = true;
+				}
+				if (event.key.code == sf::Keyboard::C) {
+					mleft2 = true;
+				}
+				if (event.key.code == sf::Keyboard::V) {
+					mdown2 = true;
+				}
+				if (event.key.code == sf::Keyboard::B) {
+					mright2 = true;
 				}
 			}
 			if (event.type == sf::Event::KeyReleased) {
-				/*if (event.key.code == sf::Keyboard::     ) {
-					
-				}*/
+				if (event.key.code == sf::Keyboard::L) {
+					mdown1 = false;
+				}
+				if (event.key.code == sf::Keyboard::V) {
+					mdown2 = false;
+				}
 			}
 		}
 		
@@ -458,42 +504,134 @@ int main() {
 
 
 
+
+
+
+
+
+
 		//1er joueur
+
 		printf ("  player 1 \n");
 		if (doStartTourPlayer1) {
 			startTour(game.p1);
 			doStartTourPlayer1 = false;
 		}
 		
-		//actions du joueur (j'ai la flemme de les faire)
+
+
+
+		//actions du joueur 1
 		
-		if (left1) {
-			if (!game.p1.block[game.p1.posMat.x - 1][game.p1.posMat.y].exist){
+		if (oleft1) {
+			if (!game.p1.blocks[game.p1.bf1.posMat.x - 1][game.p1.bf1.posMat.y].exist){
 				game.p1.bf1.orient = LEFT;
-				left1 = false;
+				oleft1 = false;
 			}
 		}
 		
-		if (right1) {
-			if (!game.p1.block[game.p1.posMat.x + 1][game.p1.posMat.y].exist){
+		if (oright1) {
+			if (!game.p1.blocks[game.p1.bf1.posMat.x + 1][game.p1.bf1.posMat.y].exist){
 				game.p1.bf1.orient = RIGHT;
-				right1 = false;
+				oright1 = false;
 			}
 		}
 		
-		if (up1) {
-			if (!game.p1.block[game.p1.posMat.x][game.p1.posMat.y - 1].exist){
+		if (oup1) {
+			if (!game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y - 1].exist){
 				game.p1.bf1.orient = UP;
-				up1 = false;
+				oup1 = false;
 			}
 		}
 		
-		if (down1) {
-			if (!game.p1.block[game.p1.posMat.x][game.p1.posMat.y + 1].exist){
+		if (odown1) {
+			if (!game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y + 1].exist){
 				game.p1.bf1.orient = DOWN;
-				down1 = false;
+				odown1 = false;
 			}
 		}
+
+		//on souhaite déplacer le bf1 à gauche
+		if (mleft1) { 
+			//on verifie si c'est possible
+			switch (game.p1.bf1.orient) { 
+				case LEFT : {
+					if (!game.p1.blocks[game.p1.bf1.posMat.x - 2][game.p1.bf1.posMat.y].exist && game.p1.bf1.posMat.x - 2 >= 0){
+						mleft1 = false;
+						depleft1 = true;
+					}
+				} break;
+				case RIGHT, UP : {
+					if (!game.p1.blocks[game.p1.bf1.posMat.x - 1][game.p1.bf1.posMat.y].exist && game.p1.bf1.posMat.x - 1 >= 0){
+						mleft1 = false;
+						depleft1 = true;
+					}
+				} break;
+				case DOWN : {
+					if (!game.p1.blocks[game.p1.bf1.posMat.x - 1][game.p1.bf1.posMat.y].exist && game.p1.bf1.posMat.x - 1 >= 0 && !game.p1.blocks[game.p1.bf1.posMat.x - 1][game.p1.bf1.posMat.y + 1].exist){
+						mleft1 = false;
+						depleft1 = true;
+					}
+				} break;
+			}
+			//et on le déplace
+			if depleft1 {
+				game.p1.bf1.posMat.y = game.p1.bf1.posMat.y - 1 ;
+				game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y].color = game.p1.bf1.color1;
+				game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y].exist = true; 
+				game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y + 1].color = VOID;
+				game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y + 1].exist = false;
+				depleft1 = false;
+			}
+		}
+
+		//on souhaite déplacer le bf1 à droite
+		if (mright1) { 
+			//on verifie si c'est possible
+			switch (game.p1.bf1.orient) { 
+				case RIGHT : {
+					if (!game.p1.blocks[game.p1.bf1.posMat.x + 2][game.p1.bf1.posMat.y].exist && game.p1.bf1.posMat.x + 2 < WIDTHMAT){
+						mright1 = false;
+						depright1 = true;
+					}
+				} break;
+				case LEFT, UP : {
+					if (!game.p1.blocks[game.p1.bf1.posMat.x + 1][game.p1.bf1.posMat.y].exist && game.p1.bf1.posMat.x + 1 < WIDTHMAT){
+						mright1 = false;
+						depright1 = true;
+					}
+				} break;
+				case DOWN : {
+					if (!game.p1.blocks[game.p1.bf1.posMat.x + 1][game.p1.bf1.posMat.y].exist && game.p1.bf1.posMat.x + 1 < WIDTHMAT && !game.p1.blocks[game.p1.bf1.posMat.x + 1][game.p1.bf1.posMat.y + 1].exist){
+						mright1 = false;
+						depright1 = true;
+					}
+				} break;
+			}
+			//et on le déplace
+			if depright1 {
+				game.p1.bf1.posMat.y = game.p1.bf1.posMat.y + 1 ;
+				game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y].color = game.p1.bf1.color1;
+				game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y].exist = true; 
+				game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y - 1].color = VOID;
+				game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y - 1].exist = false;
+				depright1 = false;
+			}
+		}
+
+		//on souhaite accelerer le bf du j1
+		if mdown1 {
+			game.p1.bf1.speed = FALLSPEED*2;
+		}
+
+		
+
+
+
+
+
+
+
 
 		//if (delayPlayer1 > DELAY) {
 		if (continueFall(game.p1)){
@@ -533,44 +671,135 @@ int main() {
 
 		//printf("%s", chaine);
 		
+
+
+
+
+
+
+
+
 		
-/*		//2e joueur
+		//2e joueur
 		printf ("  player 2 \n");
 		if (doStartTourPlayer2) {
 			startTour(game.p2);
 			doStartTourPlayer2 = false;
 		}
 		
-		//actions du joueur 2 (j'ai la flemme de les faire)
+
+
+
+
+
+		//actions du joueur 2
 		
 		if (left2) {
-			if (!game.p2.block[game.p2.posMat.x - 1][game.p2.posMat.y].exist){
+			if (!game.p2.blocks[game.p2.bf1.posMat.x - 1][game.p2.bf1.posMat.y].exist){
 				game.p2.bf1.orient = LEFT;
 				left2 = false;
 			}
 		}
 		
 		if (right2) {
-			if (!game.p2.block[game.p2.posMat.x + 1][game.p2.posMat.y].exist){
+			if (!game.p2.blocks[game.p2.bf1.posMat.x + 1][game.p2.bf1.posMat.y].exist){
 				game.p2.bf1.orient = RIGHT;
 				right2 = false;
 			}
 		}
 		
 		if (up2) {
-			if (!game.p2.block[game.p2.posMat.x][game.p2.posMat.y - 1].exist){
+			if (!game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y - 1].exist){
 				game.p2.bf1.orient = UP;
 				up2 = false;
 			}
 		}
 		
 		if (down2) {
-			if (!game.p2.block[game.p2.posMat.x][game.p2.posMat.y + 1].exist){
+			if (!game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y + 1].exist){
 				game.p2.bf1.orient = DOWN;
 				down2 = false;
 			}
 		}
 		
+		//on souhaite déplacer le bf1 à gauche
+		if (mleft2) { 
+			//on verifie si c'est possible
+			switch (game.p2.bf1.orient) { 
+				case LEFT : {
+					if (!game.p2.blocks[game.p2.bf1.posMat.x - 2][game.p2.bf1.posMat.y].exist && game.p2.bf1.posMat.x - 2 >= 0){
+						mleft2 = false;
+						depleft2 = true;
+					}
+				} break;
+				case RIGHT, UP : {
+					if (!game.p2.blocks[game.p2.bf1.posMat.x - 1][game.p2.bf1.posMat.y].exist && game.p2.bf1.posMat.x - 1 >= 0){
+						mleft2 = false;
+						depleft2 = true;
+					}
+				} break;
+				case DOWN : {
+					if (!game.p2.blocks[game.p2.bf1.posMat.x - 1][game.p2.bf1.posMat.y].exist && game.p2.bf1.posMat.x - 1 >= 0 && !game.p2.blocks[game.p2.bf1.posMat.x - 1][game.p2.bf1.posMat.y + 1].exist){
+						mleft2 = false;
+						depleft2 = true;
+					}
+				} break;
+			}
+			//et on le déplace
+			if depleft2 {
+				game.p2.bf1.posMat.y = game.p1.bf1.posMat.y - 1 ;
+				game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y].color = game.p2.bf1.color1;
+				game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y].exist = true; 
+				game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y + 1].color = VOID;
+				game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y + 1].exist = false;
+				depleft2 = false;
+			}
+		}
+
+		//on souhaite déplacer le bf1 à droite
+		if (mright2) { 
+			//on verifie si c'est possible
+			switch (game.p2.bf1.orient) { 
+				case RIGHT : {
+					if (!game.p2.blocks[game.p2.bf1.posMat.x + 2][game.p2.bf1.posMat.y].exist && game.p2.bf1.posMat.x + 2 < WIDTHMAT){
+						mright2 = false;
+						depright2 = true;
+					}
+				} break;
+				case LEFT, UP : {
+					if (!game.p2.blocks[game.p2.bf1.posMat.x + 1][game.p2.bf1.posMat.y].exist && game.p2.bf1.posMat.x + 1 < WIDTHMAT){
+						mright2 = false;
+						depright2 = true;
+					}
+				} break;
+				case DOWN : {
+					if (!game.p2.blocks[game.p2.bf1.posMat.x + 1][game.p2.bf1.posMat.y].exist && game.p2.bf1.posMat.x + 1 < WIDTHMAT && !game.p2.blocks[game.p2.bf1.posMat.x + 1][game.p2.bf1.posMat.y + 1].exist){
+						mright2 = false;
+						depright2 = true;
+					}
+				} break;
+			}
+			//et on le déplace
+			if depright2 {
+				game.p2.bf1.posMat.y = game.p1.bf1.posMat.y + 1 ;
+				game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y].color = game.p2.bf1.color1;
+				game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y].exist = true; 
+				game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y - 1].color = VOID;
+				game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y - 1].exist = false;
+				depright2 = false;
+			}
+		}
+
+		//on souhaite accelerer le bf du j2
+		if mdown2 {
+			game.p2.bf1.speed = FALLSPEED*2;
+		}
+
+
+
+
+
+
 		//if (delayPlayer2 > DELAY) {
 		if (continueFall(game.p2)){
 			doGravityOnBlockFall(game.p2);
@@ -605,7 +834,7 @@ int main() {
 		}
 		chaine = mat2S(game.p2.blocks);
 		
-		//printf("%s", chaine); */
+		//printf("%s", chaine); 
 
 	}
 	return 0 ;
