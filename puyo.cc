@@ -116,8 +116,8 @@ int random0toNb (int nb) {
 BlockFall randBlockFall() {
     BlockFall randBlock;
 	randBlock.orient = DOWN;
-	randBlock.color1 = switchColor(random0toNb(NBCOLORS-1));
-	randBlock.color2 = switchColor(random0toNb(NBCOLORS-1));
+	randBlock.color1 = switchColor(random0toNb(2));
+	randBlock.color2 = switchColor(random0toNb(2));
 	randBlock.speed = FALLSPEED;
     return randBlock;
 }
@@ -210,7 +210,7 @@ bool continueFall(const Player& player) {
 	return test;
 }
 
-void blockDown (Player p1) {
+void blockDown (Player& p1) {
 	switch (p1.bf1.orient) {
 		case LEFT : { 
 			assert(p1.bf1.posMat.x-1>=0);
@@ -302,7 +302,7 @@ int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
 	return nb;
 }
 
-void setMalusOnPlayer (Player p1, int reps) {
+void setMalusOnPlayer (Player& p1, int reps) {
 	int nb ; 
 	for (int i = 0 ; i < reps ; i++) {
 		nb = random0toNb(WIDTHMAT-1);
@@ -366,7 +366,7 @@ int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 }
 
 static String mat2S(Block mat[WIDTHMAT][HEIGHTMAT]) {
-		String chaine = " " + '\n';
+		String chaine = " \n";
 		for (int i = 0; i < WIDTHMAT; i++) {
 			printf ("[");
 			//chaine = chaine + "[" ;
@@ -391,10 +391,10 @@ int main() {
 	bool doStartTourPlayer1 = true;
 	bool doStartTourPlayer2 = true; 
 	bool gameOver = false;
-	bool up = false;
-	bool left = false;
-	bool right=false;
-	bool down=false; 
+	bool up1 = false;
+	bool left1 = false;
+	bool right1 = false;
+	bool down1 = false; 
 	int penaltyReps1;
 	int penaltyReps2;
 	int nbCombinations; 
@@ -428,7 +428,25 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
-
+			if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == sf::Keyboard::Left) {
+					left1 = true;
+				}
+				if (event.key.code == sf::Keyboard::Right) {
+					right1 = true;
+				}
+				if (event.key.code == sf::Keyboard::Up) {
+					up1 = true;
+				}
+				if (event.key.code == sf::Keyboard::Down) {
+					down1 = true;
+				}
+			}
+			if (event.type == sf::Event::KeyReleased) {
+				/*if (event.key.code == sf::Keyboard::     ) {
+					
+				}*/
+			}
 		}
 		
 		//mise jour de l'état du jeu 
@@ -448,35 +466,34 @@ int main() {
 		}
 		
 		//actions du joueur (j'ai la flemme de les faire)
-		if (event.type == sf::Event::KeyPressed) {
-			if (event.key.code == sf::Keyboard::Left) {
-				left = true;
-			}
-			if (event.key.code == sf::Keyboard::Right) {
-				right = true;
-			}
-			if (event.key.code == sf::Keyboard::Up) {
-				up = true;
-			}
-			if (event.key.code == sf::Keyboard::Down) {
-				down = true;
-			}
-		}
-		if (event.type == sf::Event::KeyReleased) {
-			if (event.key.code == sf::Keyboard::Left) {
-				left = false;
-			}
-			if (event.key.code == sf::Keyboard::Right) {
-				right = false;
-			}
-			if (event.key.code == sf::Keyboard::Up) {
-				up = false;
-			}
-			if (event.key.code == sf::Keyboard::Down) {
-				down = false;
+		
+		if (left1) {
+			if (!game.p1.block[game.p1.posMat.x - 1][game.p1.posMat.y].exist){
+				game.p1.bf1.orient = LEFT;
+				left1 = false;
 			}
 		}
 		
+		if (right1) {
+			if (!game.p1.block[game.p1.posMat.x + 1][game.p1.posMat.y].exist){
+				game.p1.bf1.orient = RIGHT;
+				right1 = false;
+			}
+		}
+		
+		if (up1) {
+			if (!game.p1.block[game.p1.posMat.x][game.p1.posMat.y - 1].exist){
+				game.p1.bf1.orient = UP;
+				up1 = false;
+			}
+		}
+		
+		if (down1) {
+			if (!game.p1.block[game.p1.posMat.x][game.p1.posMat.y + 1].exist){
+				game.p1.bf1.orient = DOWN;
+				down1 = false;
+			}
+		}
 
 		//if (delayPlayer1 > DELAY) {
 		if (continueFall(game.p1)){
@@ -488,7 +505,7 @@ int main() {
 		if (!continueFall(game.p1)) {
 			printf ("bf descendu 1 \n");
 			blockDown(game.p1);
-/*			doGravityOnAll(game.p1);
+			doGravityOnAll(game.p1);
 			do {
 				checkAllChains(game.p1.blocks);
 				nbCombinations = destroyBlock(game.p1.blocks);
@@ -496,12 +513,13 @@ int main() {
 				if (nbCombinations > 0) {
 					penaltyReps2 += pow(2, nbCombinations);
 				}
+				printf ("nbComb %d \n", nbCombinations);
 			} while (nbCombinations > 0) ;
 			if (penaltyReps1 != 0) {
-				//setMalusOnPlayer(game.p1, penaltyReps1);
+				setMalusOnPlayer(game.p1, penaltyReps1);
 				penaltyReps1 = 0; 
 			}
-*/			if (!blockAtStart(game.p1)) { 
+			if (!blockAtStart(game.p1)) { 
 				doStartTourPlayer1 = true; 
 				printf ("dostarttour1 = true \n");
 			} else {
@@ -516,7 +534,7 @@ int main() {
 		//printf("%s", chaine);
 		
 		
-		//2e joueur
+/*		//2e joueur
 		printf ("  player 2 \n");
 		if (doStartTourPlayer2) {
 			startTour(game.p2);
@@ -524,6 +542,34 @@ int main() {
 		}
 		
 		//actions du joueur 2 (j'ai la flemme de les faire)
+		
+		if (left2) {
+			if (!game.p2.block[game.p2.posMat.x - 1][game.p2.posMat.y].exist){
+				game.p2.bf1.orient = LEFT;
+				left2 = false;
+			}
+		}
+		
+		if (right2) {
+			if (!game.p2.block[game.p2.posMat.x + 1][game.p2.posMat.y].exist){
+				game.p2.bf1.orient = RIGHT;
+				right2 = false;
+			}
+		}
+		
+		if (up2) {
+			if (!game.p2.block[game.p2.posMat.x][game.p2.posMat.y - 1].exist){
+				game.p2.bf1.orient = UP;
+				up2 = false;
+			}
+		}
+		
+		if (down2) {
+			if (!game.p2.block[game.p2.posMat.x][game.p2.posMat.y + 1].exist){
+				game.p2.bf1.orient = DOWN;
+				down2 = false;
+			}
+		}
 		
 		//if (delayPlayer2 > DELAY) {
 		if (continueFall(game.p2)){
@@ -557,10 +603,10 @@ int main() {
 			}
 			printf ("end tour p2 \n");
 		}
+		chaine = mat2S(game.p2.blocks);
+		
+		//printf("%s", chaine); */
 
 	}
 	return 0 ;
 }
-
-
-
