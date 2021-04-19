@@ -116,8 +116,8 @@ int random0toNb (int nb) {
 BlockFall randBlockFall() {
     BlockFall randBlock;
 	randBlock.orient = DOWN;
-	randBlock.color1 = switchColor(random0toNb(2));
-	randBlock.color2 = switchColor(random0toNb(2));
+	randBlock.color1 = switchColor(random0toNb(1));
+	randBlock.color2 = switchColor(random0toNb(1));
 	randBlock.speed = FALLSPEED;
     return randBlock;
 }
@@ -146,7 +146,7 @@ void doGravityOnBlockFall (Player& player){
 
 void doGravityOnAll (Player& player) {
 	int i, j, k;
-	for (i = 0; i < WIDTHMAT -1; i++) {
+	for (i = 0; i < WIDTHMAT ; i++) {
 		for (j = 0; j<HEIGHTMAT-1;j++){
 			if (!player.blocks[i][j+1].exist){
 				for (k = j; k>=0; k--) {
@@ -306,11 +306,11 @@ void setMalusOnPlayer (Player& p1, int reps) {
 	int nb ; 
 	for (int i = 0 ; i < reps ; i++) {
 		nb = random0toNb(WIDTHMAT-1);
-		if (p1.blocks[0][nb].exist == false) {
-			p1.blocks[i][0].color = WHITE ;
-			p1.blocks[i][0].exist = true ; 
-			doGravityOnAll(p1);		
+		if (p1.blocks[nb][0].exist == false) {
+			p1.blocks[nb][0].color = WHITE ;
+			p1.blocks[nb][0].exist = true ; 
 		}
+		doGravityOnAll(p1);	
 	}
 }
 
@@ -498,7 +498,8 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
 	bool doStartTourPlayer1 = true;
 	bool doStartTourPlayer2 = true; 
-	bool gameOver = false;
+	bool gameOver1 = false;
+	bool gameOver2 =false;
 	bool oup1 = false;
 	bool oleft1 = false;
 	bool oright1 = false;
@@ -527,7 +528,7 @@ int main() {
 
 
 	//boucle principale 
-	while (window.isOpen()&&!gameOver) {
+	while (window.isOpen()&&!gameOver1&&!gameOver2) {
 		//actions du joueur
 		sf::Event event ; 
 		while (window.pollEvent(event)) {
@@ -686,7 +687,7 @@ int main() {
 				doStartTourPlayer1 = true; 
 				printf ("dostarttour1 = true \n");
 			} else {
-				gameOver = true;
+				gameOver1 = true;
 				printf ("gameOver j1 = true \n");
 			}
 			printf ("end tour p1 \n");
@@ -782,7 +783,7 @@ int main() {
 				doStartTourPlayer2 = true; 
 				printf ("dostarttour2 = true \n");
 			} else {
-				gameOver = true;
+				gameOver2 = true;
 				printf ("gameOver j2 = true \n");
 			}
 			printf ("end tour p2 \n");
@@ -792,5 +793,12 @@ int main() {
 		
 
 	}
+
+	if (gameOver2) {
+		printf ("player 1 gagne\n");
+	} else {
+		printf ("player 2 gagne\n");
+	}
+
 	return 0 ;
 }
