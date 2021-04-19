@@ -468,6 +468,36 @@ void right(Player& p1) {
 	}
 }
 
+void actionsJoueur(Player& p1, bool& left, bool& right, bool& up, bool& down) {
+	if (left) {
+		if (!p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist){
+			p1.bf1.orient = LEFT;
+			left = false;
+		}
+	}
+	
+	if (right) {
+		if (!p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist){
+			p1.bf1.orient = RIGHT;
+			right = false;
+		}
+	}
+	
+	if (up) {
+		if (!p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist){
+			p1.bf1.orient = UP;
+			up = false;
+		}
+	}
+	
+	if (down) {
+		if (!p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist){
+			p1.bf1.orient = DOWN;
+			down = false;
+		}
+	}
+}
+
 void startGame(Game& game){
 	//J1
 	//initialisation de la matrice	
@@ -612,33 +642,7 @@ int main() {
 
 		//actions du joueur 1
 		
-		if (oleft1) {
-			if (!game.p1.blocks[game.p1.bf1.posMat.x - 1][game.p1.bf1.posMat.y].exist){
-				game.p1.bf1.orient = LEFT;
-				oleft1 = false;
-			}
-		}
-		
-		if (oright1) {
-			if (!game.p1.blocks[game.p1.bf1.posMat.x + 1][game.p1.bf1.posMat.y].exist){
-				game.p1.bf1.orient = RIGHT;
-				oright1 = false;
-			}
-		}
-		
-		if (oup1) {
-			if (!game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y - 1].exist){
-				game.p1.bf1.orient = UP;
-				oup1 = false;
-			}
-		}
-		
-		if (odown1) {
-			if (!game.p1.blocks[game.p1.bf1.posMat.x][game.p1.bf1.posMat.y + 1].exist){
-				game.p1.bf1.orient = DOWN;
-				odown1 = false;
-			}
-		}
+		actionsJoueur(game.p1, oleft1, oright1, oup1, odown1);
 
 		//on souhaite déplacer le bf1 à gauche
 		if (mleft1) { 
@@ -709,33 +713,7 @@ int main() {
 
 		//actions du joueur 2
 		
-		if (oleft2) {
-			if (!game.p2.blocks[game.p2.bf1.posMat.x - 1][game.p2.bf1.posMat.y].exist){
-				game.p2.bf1.orient = LEFT;
-				oleft2 = false;
-			}
-		}
-		
-		if (oright2) {
-			if (!game.p2.blocks[game.p2.bf1.posMat.x + 1][game.p2.bf1.posMat.y].exist){
-				game.p2.bf1.orient = RIGHT;
-				oright2 = false;
-			}
-		}
-		
-		if (oup2) {
-			if (!game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y - 1].exist){
-				game.p2.bf1.orient = UP;
-				oup2 = false;
-			}
-		}
-		
-		if (odown2) {
-			if (!game.p2.blocks[game.p2.bf1.posMat.x][game.p2.bf1.posMat.y + 1].exist){
-				game.p2.bf1.orient = DOWN;
-				odown2 = false;
-			}
-		}
+		actionsJoueur(game.p2, oleft2, oright2, oup2, odown2);
 		
 		//on souhaite déplacer le bf1 à gauche
 		if (mleft2) { 
