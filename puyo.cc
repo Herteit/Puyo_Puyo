@@ -394,29 +394,32 @@ int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 
 
 
+Pos getPosSecondBlock (const Player& player){
+	Pos pos;
+	pos.x = player.bf1.posMat.x;
+	pos.y = player.bf1.posMat.y;
+	switch (player.bf1.orient) {
+		case RIGHT : {
+			pos.x += 1;
+		}break;
+		case LEFT : {
+			pos.x -= 1;
+		}break;
+		case UP : {
+			pos.y -= 1;
+		}break;
+		case DOWN : {
+			pos.y += 1;
+		}break;
+	}
+	return pos;
+}
+
+
+
 void mat2S(Player p) {
 	//determination emplacement 2nd partie du bf
-	Pos pos;
-	pos.x = p.bf1.posMat.x;
-	pos.y = p.bf1.posMat.y;
-	switch (p.bf1.orient) {
-		case RIGHT : {
-			pos.x = p.bf1.posMat.x + 1;
-			break;
-		}
-		case LEFT : {
-			pos.x = p.bf1.posMat.x - 1;
-			break;
-		}
-		case UP : {
-			pos.y = p.bf1.posMat.y - 1;
-			break;
-		}
-		case DOWN : {
-			pos.y = p.bf1.posMat.y + 1;
-			break;
-		}
-	}
+	Pos pos = getPosSecondBlock(p);
 
 	//affichage de la matrice avec la 2nd partie du bf
 	for (int i = 0; i < WIDTHMAT; i++) {
@@ -822,7 +825,6 @@ int main() {
 			}
 			printf ("end tour p2 \n");
 		}
-		printf("SizePuyo = %d \n",SIZEPUYO);
 		mat2S(game.p2);
 		window.clear(Color::White);
 		
@@ -835,13 +837,23 @@ int main() {
 			for (int j = 0; j < HEIGHTMAT ; j++){
 				RectangleShape cases ;
 				cases.setPosition(i*SIZEPUYO,j*SIZEPUYO);
-				cases.setFillColor(getColor(game.p1.blocks[i][j].color));   
+				Pos pos = getPosSecondBlock(game.p1);
+				if (i == pos.x && j == pos.y){
+					cases.setFillColor(getColor(game.p1.bf1.color2));
+				} else {
+					cases.setFillColor(getColor(game.p1.blocks[i][j].color));   
+				}
 				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
-				window.draw(cases) ;
+				window.draw(cases);
 				cases.setPosition(450+i*SIZEPUYO,j*SIZEPUYO);
-				cases.setFillColor(getColor(game.p2.blocks[i][j].color));   
+				pos = getPosSecondBlock(game.p2);
+				if (i == pos.x && j == pos.y){
+					cases.setFillColor(getColor(game.p2.bf1.color2));
+				} else {
+					cases.setFillColor(getColor(game.p2.blocks[i][j].color));   
+				}  
 				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
-				window.draw(cases) ;
+				window.draw(cases);
 			}
 		}
 		
