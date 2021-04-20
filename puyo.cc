@@ -803,20 +803,20 @@ int main() {
 			for (int j = 0; j < HEIGHTMAT ; j++){
 				RectangleShape cases ;
 				cases.setPosition(i*SIZEPUYO,j*SIZEPUYO);
-				Pos pos = getPosSecondBlock(game.p1);
-				if (i == pos.x && j == pos.y){
-					cases.setFillColor(getColor(game.p1.bf1.color2));
-				} else {
-					cases.setFillColor(getColor(game.p1.blocks[i][j].color));   
-				}
-				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
-				window.draw(cases);
-				cases.setPosition(450+i*SIZEPUYO,j*SIZEPUYO);
-				pos = getPosSecondBlock(game.p2);
+				Pos pos = getPosSecondBlock(game.p2);
 				if (i == pos.x && j == pos.y){
 					cases.setFillColor(getColor(game.p2.bf1.color2));
 				} else {
 					cases.setFillColor(getColor(game.p2.blocks[i][j].color));   
+				}
+				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+				window.draw(cases);
+				cases.setPosition(450+i*SIZEPUYO,j*SIZEPUYO);
+				pos = getPosSecondBlock(game.p1);
+				if (i == pos.x && j == pos.y){
+					cases.setFillColor(getColor(game.p1.bf1.color2));
+				} else {
+					cases.setFillColor(getColor(game.p1.blocks[i][j].color));   
 				}  
 				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
 				window.draw(cases);
