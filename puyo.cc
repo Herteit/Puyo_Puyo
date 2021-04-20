@@ -12,7 +12,7 @@ using namespace sf;
 const int NBCOLORS = 5;
 const int HEIGHT = 600;
 const int WIDTH = 900;
-const int FALLSPEED = 10;
+const int FALLSPEED = 1;
 const int SIZEPUYO = WIDTH/30;
 const int WIDTHMAT = 6;
 const int HEIGHTMAT = 12; 
@@ -31,7 +31,7 @@ const char BLUE = 'b';
 const char GREEN = 'g';
 const char PURPLE = 'p';
 
-const float DELAY = 0.2f;
+const float DELAY = 0.5f;
 
 struct Pos {
 	int x ;
@@ -82,7 +82,6 @@ void initBlockFall(BlockFall& bf1, const BlockFall& bf2) {
 	bf1.posMat.x = WIDTHMAT /2 -1;
 	bf1.posMat.y = 0;
 	bf1.speed = bf2.speed;
-	printf ("initBlockFall \n");
 }
 
 
@@ -123,8 +122,8 @@ int random0toNb (int nb) {
 BlockFall randBlockFall() {
     BlockFall randBlock;
 	randBlock.orient = DOWN;
-	randBlock.color1 = switchColor(random0toNb(1));
-	randBlock.color2 = switchColor(random0toNb(1));
+	randBlock.color1 = switchColor(random0toNb(NBCOLORS - 1));
+	randBlock.color2 = switchColor(random0toNb(NBCOLORS - 1));
 	randBlock.speed = FALLSPEED;
     return randBlock;
 }
@@ -141,8 +140,6 @@ void startTour(Player& p1) {
 
 
 void doGravityOnBlockFall (Player& player){
-	printf ("doGravOnBF \n");
-	printf ("begin doGravityOnBlockFall y : %d \n", player.bf1.posMat.y);
 	assert(0 <= player.bf1.posMat.y);
 	assert(player.bf1.posMat.y < HEIGHTMAT - 1);
 	player.bf1.posMat.y ++;
@@ -150,7 +147,6 @@ void doGravityOnBlockFall (Player& player){
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y].color = player.bf1.color1 ;
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y-1].exist = false ;
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y-1].color = VOID;
-	printf ("doGravityOnBlockFall y : %d \n", player.bf1.posMat.y);
 }
 
 
@@ -191,35 +187,22 @@ bool continueFall(const Player& player) {
 			assert(WIDTHMAT> player.bf1.posMat.x + 1);
 			assert(0 <= player.bf1.posMat.y + 1);
 			if (player.bf1.posMat.y < HEIGHTMAT - 1){
-				
-				if (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist ) {
-					printf ("1er");
-				}
-				if (!player.blocks[player.bf1.posMat.x + 1][player.bf1.posMat.y + 1].exist) {
-					printf ("2e");
-				}				
-				
-				
 				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist && !player.blocks[player.bf1.posMat.x + 1][player.bf1.posMat.y + 1].exist);
 			}
 		break;
 		case UP : 
 			assert(0 <= player.bf1.posMat.y + 1);
-			if (player.bf1.posMat.y < HEIGHTMAT - 1){
+			if ((player.bf1.posMat.y < HEIGHTMAT - 1)&&(player.bf1.posMat.y - 1 >= 0)) {
 				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 1].exist);
 			}
 		break;
 		case DOWN : 
 			assert(0 <= player.bf1.posMat.y + 1);
-			assert(HEIGHTMAT> player.bf1.posMat.y + 2);
-			if (player.bf1.posMat.y + 1 < HEIGHTMAT - 1){
+			if (player.bf1.posMat.y + 2 < HEIGHTMAT){
 				test = (!player.blocks[player.bf1.posMat.x][player.bf1.posMat.y + 2].exist);
 			}
 		break;
 	}
-	printf ("continueFall: %d %d \n", player.bf1.posMat.x, player.bf1.posMat.y);
-	if (test)
-		printf ("block peut continuer\n");
 	return test;
 }
 
@@ -238,7 +221,6 @@ void blockDown (Player& p1) {
 			assert(p1.bf1.posMat.x+1<HEIGHTMAT);
 			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].color = p1.bf1.color2;
 			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].exist = true;
-			printf("blockfall implanté \n");
 		} break;
 		case UP : {
 			assert(p1.bf1.posMat.y-1>=0);
@@ -332,8 +314,9 @@ void setMalusOnPlayer (Player& p1, int reps) {
 		if (p1.blocks[nb][0].exist == false) {
 			p1.blocks[nb][0].color = WHITE ;
 			p1.blocks[nb][0].exist = true ; 
+			doGravityOnAll(p1);
 		}
-		doGravityOnAll(p1);	
+		doGravityOnAll(p1);
 	}
 }
 
@@ -463,11 +446,11 @@ void left(Player& p1) {
 	}
 	//et on le déplace
 	if (dep) {
-		p1.bf1.posMat.y = p1.bf1.posMat.y - 1 ;
+		p1.bf1.posMat.x -- ;
 		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].color = p1.bf1.color1;
 		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].exist = true; 
-		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].color = VOID;
-		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist = false;
+		p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].color = VOID;
+		p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist = false;
 	}
 }
 
@@ -496,11 +479,11 @@ void right(Player& p1) {
 	}
 	//et on le déplace
 	if (dep) {
-		p1.bf1.posMat.y = p1.bf1.posMat.y + 1 ;
+		p1.bf1.posMat.x ++ ;
 		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].color = p1.bf1.color1;
 		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].exist = true; 
-		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].color = VOID;
-		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist = false;
+		p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].color = VOID;
+		p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist = false;
 	}
 }
 
@@ -603,8 +586,8 @@ int main() {
 	bool mleft2 = false;
 	bool mright2 = false;
 	bool mdown2 = false; 
-	int penaltyReps1;
-	int penaltyReps2;
+	int penaltyReps1 = 0;
+	int penaltyReps2 = 0;
 	int nbCombinations; 
 	Game game ;
 	sf::Clock clock; 
@@ -685,14 +668,10 @@ int main() {
 		delayPlayer1 += dt;
 		delayPlayer2 += dt; 
         
-		printf ("    nouveau tour    \n");
-
-
 
 
 		//1er joueur
 
-		printf ("  player 1 \n");
 		if (doStartTourPlayer1) {
 			startTour(game.p1);
 			doStartTourPlayer1 = false;
@@ -722,15 +701,14 @@ int main() {
 
 
 
-		if (delayPlayer1 > DELAY) {
+		if (delayPlayer1 * game.p1.bf1.speed > DELAY) {
 			if (continueFall(game.p1)){
 				doGravityOnBlockFall(game.p1);
 			}
-			delayPlayer1 -= DELAY;
+			delayPlayer1 -= DELAY / game.p1.bf1.speed;
 		}
 		
 		if (!continueFall(game.p1)) {
-			printf ("bf descendu 1 \n");
 			blockDown(game.p1);
 			doGravityOnAll(game.p1);
 			do {
@@ -740,7 +718,6 @@ int main() {
 				if (nbCombinations > 0) {
 					penaltyReps2 += nbCombinations;
 				}
-				printf ("nbComb %d \n", nbCombinations);
 			} while (nbCombinations > 0) ;
 			if (penaltyReps1 != 0) {
 				setMalusOnPlayer(game.p1, penaltyReps1);
@@ -748,22 +725,18 @@ int main() {
 			}
 			if (!blockAtStart(game.p1)) { 
 				doStartTourPlayer1 = true; 
-				printf ("dostarttour1 = true \n");
 			} else {
 				gameOver1 = true;
-				printf ("gameOver j1 = true \n");
 			}
-			printf ("end tour p1 \n");
 		}
 
-		mat2S(game.p1);
+		//mat2S(game.p1);
 
 
 
 
 
 		//2e joueur
-		printf ("  player 2 \n");
 		if (doStartTourPlayer2) {
 			startTour(game.p2);
 			doStartTourPlayer2 = false;
@@ -793,15 +766,14 @@ int main() {
 
 
 
-		if (delayPlayer2 > DELAY) {
+		if (delayPlayer2 * game.p2.bf1.speed > DELAY) {
 			if (continueFall(game.p2)){
 				doGravityOnBlockFall(game.p2);
 			}
-			delayPlayer2 -= DELAY;
+			delayPlayer2 -= DELAY / game.p2.bf1.speed;
 		}
 		
 		if (!continueFall(game.p2)) {
-			printf("bf descendu 2 \n");
 			blockDown(game.p2);
 			doGravityOnAll(game.p2);
 			do {
@@ -818,20 +790,14 @@ int main() {
 			}
 			if (!blockAtStart(game.p2)) {
 				doStartTourPlayer2 = true; 
-				printf ("dostarttour2 = true \n");
 			} else {
 				gameOver2 = true;
-				printf ("gameOver j2 = true \n");
 			}
-			printf ("end tour p2 \n");
 		}
-		mat2S(game.p2);
-		window.clear(Color::White);
 		
-		RectangleShape rectangle;
-		rectangle.setPosition(100, 100);
-		rectangle.setFillColor(Color::Red);
-		rectangle.setSize(Vector2f(SIZEPUYO, SIZEPUYO));
+		//mat2S(game.p2);
+		
+		window.clear(Color::White);
 		
 		for (int i = 0 ; i < WIDTHMAT ; i++) {
 			for (int j = 0; j < HEIGHTMAT ; j++){
