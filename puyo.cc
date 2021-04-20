@@ -4,6 +4,7 @@
 #include <math.h>
 #include <iostream>
 #include <stdio.h>
+#include <unistd.h>
 using namespace std;
 using namespace sf;
 
@@ -12,7 +13,7 @@ const int NBCOLORS = 5;
 const int HEIGHT = 600;
 const int WIDTH = 900;
 const int FALLSPEED = 10;
-const int SIZEPUYO = 1/30 * WIDTH;
+const int SIZEPUYO = WIDTH/30;
 const int WIDTHMAT = 6;
 const int HEIGHTMAT = 12; 
 const int WAITINGPOSX = WIDTH /2 - SIZEPUYO;
@@ -30,7 +31,7 @@ const char BLUE = 'b';
 const char GREEN = 'g';
 const char PURPLE = 'p';
 
-const float DELAY = 0.01f;
+const float DELAY = 0.2f;
 
 struct Pos {
 	int x ;
@@ -72,7 +73,8 @@ struct Math {
   }
 };
 
-//initBlockFall
+
+
 void initBlockFall(BlockFall& bf1, const BlockFall& bf2) {
 	bf1.orient = RIGHT;
 	bf1.color1 = bf2.color1;
@@ -82,6 +84,8 @@ void initBlockFall(BlockFall& bf1, const BlockFall& bf2) {
 	bf1.speed = bf2.speed;
 	printf ("initBlockFall \n");
 }
+
+
 
 char switchColor (int nb) {
 	char color ;
@@ -108,11 +112,14 @@ char switchColor (int nb) {
 	return color;
 }
 
+
+
 int random0toNb (int nb) {
 	return (nb+1) * Math::random();
 }
 
-//randBlockFall
+
+
 BlockFall randBlockFall() {
     BlockFall randBlock;
 	randBlock.orient = DOWN;
@@ -123,12 +130,14 @@ BlockFall randBlockFall() {
 }
 
 
+
 void startTour(Player& p1) {
 	initBlockFall(p1.bf1, p1.bf2);
 	p1.bf2 = randBlockFall();
 	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].color = p1.bf1.color1;
 	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].exist = true;
 }
+
 
 
 void doGravityOnBlockFall (Player& player){
@@ -143,6 +152,8 @@ void doGravityOnBlockFall (Player& player){
 	player.blocks[player.bf1.posMat.x][player.bf1.posMat.y-1].color = VOID;
 	printf ("doGravityOnBlockFall y : %d \n", player.bf1.posMat.y);
 }
+
+
 
 void doGravityOnAll (Player& player) {
 	int i, j, k;
@@ -161,6 +172,8 @@ void doGravityOnAll (Player& player) {
 		}
 	}
 }
+
+
 
 bool continueFall(const Player& player) {
 	bool test = false;
@@ -210,6 +223,8 @@ bool continueFall(const Player& player) {
 	return test;
 }
 
+
+
 void blockDown (Player& p1) {
 	switch (p1.bf1.orient) {
 		case LEFT : { 
@@ -240,7 +255,8 @@ void blockDown (Player& p1) {
 	}
 }
 
-//AttribuerGroupe
+
+
 int AttribuerGroupe ( Block mat[WIDTHMAT][HEIGHTMAT] , Pos posBlock ,  int groupID ){
 	int x;
 	int y;
@@ -268,7 +284,8 @@ int AttribuerGroupe ( Block mat[WIDTHMAT][HEIGHTMAT] , Pos posBlock ,  int group
 	return longueurChaine ;
 }
 
-//checkAllChains
+
+
 void checkAllChains ( Block mat[WIDTHMAT][HEIGHTMAT]) {
 	int baseGroupId = 1;
 	for (int i = 0; i < WIDTHMAT; i++) {
@@ -286,9 +303,13 @@ void checkAllChains ( Block mat[WIDTHMAT][HEIGHTMAT]) {
 	}
 }
 
+
+
 bool blockAtStart (const Player& player) {
 	return (player.blocks[WIDTHMAT/2 - 1][0].exist || player.blocks[WIDTHMAT/2][0].exist);
 }
+
+
 
 int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
 	int nb = 0; 
@@ -302,6 +323,8 @@ int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
 	return nb;
 }
 
+
+
 void setMalusOnPlayer (Player& p1, int reps) {
 	int nb ; 
 	for (int i = 0 ; i < reps ; i++) {
@@ -313,6 +336,8 @@ void setMalusOnPlayer (Player& p1, int reps) {
 		doGravityOnAll(p1);	
 	}
 }
+
+
 
 void resetBlocksForID (Block block[WIDTHMAT][HEIGHTMAT], int ID) {
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
@@ -349,6 +374,8 @@ void resetBlocksForID (Block block[WIDTHMAT][HEIGHTMAT], int ID) {
 	}
 }
 
+
+
 int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 	int nbrChain = 0 ; 
 	for (int k = 1 ; k < WIDTHMAT*HEIGHTMAT ; k++ ) {
@@ -364,6 +391,8 @@ int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 	}
 	return nbrChain ; 
 }
+
+
 
 void mat2S(Player p) {
 	//determination emplacement 2nd partie du bf
@@ -406,6 +435,8 @@ void mat2S(Player p) {
 	}
 }
 
+
+
 void left(Player& p1) {
 	int dep = false;
 	//on verifie si c'est possible
@@ -436,6 +467,8 @@ void left(Player& p1) {
 		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist = false;
 	}
 }
+
+
 
 void right(Player& p1) {
 	int dep = false;
@@ -468,6 +501,8 @@ void right(Player& p1) {
 	}
 }
 
+
+
 void actionsJoueur(Player& p1, bool& left, bool& right, bool& up, bool& down) {
 	if (left) {
 		if (!p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist){
@@ -498,28 +533,49 @@ void actionsJoueur(Player& p1, bool& left, bool& right, bool& up, bool& down) {
 	}
 }
 
+
+
 void startGame(Game& game){
-	//J1
 	//initialisation de la matrice	
 	for (int i = 0; i < WIDTHMAT; i++) {
 		for (int j = 0; j < HEIGHTMAT; j++) {
 			game.p1.blocks[i][j].color = VOID;
 			game.p1.blocks[i][j].exist = false;
-		}
-	}
-	//initialisation bf
-	game.p1.bf2=randBlockFall();
-
-	//J2
-	//initialisation de la matrice	
-	for (int i = 0; i < WIDTHMAT; i++) {
-		for (int j = 0; j < HEIGHTMAT; j++) {
 			game.p2.blocks[i][j].color = VOID;
 			game.p2.blocks[i][j].exist = false;
 		}
 	}
 	//initialisation bf
+	game.p1.bf2=randBlockFall();
 	game.p2.bf2=game.p1.bf2;
+}
+
+
+
+Color getColor (char color){
+	switch (color) {
+		case YELLOW :
+			return Color::Yellow;
+		break;
+		case RED : 
+			return Color::Red; 
+		break ; 
+		case BLUE : 
+			return Color::Blue ; 
+		break ; 
+		case GREEN : 
+			return Color::Green ;
+		break ;
+		case PURPLE :
+			return Color::Magenta;
+		break ;
+		case WHITE : 
+			return Color::White;
+		break;
+		default : 
+			return Color::Black;
+		break ;	
+	}
 }
 
 
@@ -663,12 +719,12 @@ int main() {
 
 
 
-		//if (delayPlayer1 > DELAY) {
-		if (continueFall(game.p1)){
-			doGravityOnBlockFall(game.p1);
+		if (delayPlayer1 > DELAY) {
+			if (continueFall(game.p1)){
+				doGravityOnBlockFall(game.p1);
+			}
+			delayPlayer1 -= DELAY;
 		}
-		//	delayPlayer1 -= DELAY;
-		//}
 		
 		if (!continueFall(game.p1)) {
 			printf ("bf descendu 1 \n");
@@ -679,7 +735,7 @@ int main() {
 				nbCombinations = destroyBlock(game.p1.blocks);
 				doGravityOnAll(game.p1); 
 				if (nbCombinations > 0) {
-					penaltyReps2 += pow(2, nbCombinations);
+					penaltyReps2 += nbCombinations;
 				}
 				printf ("nbComb %d \n", nbCombinations);
 			} while (nbCombinations > 0) ;
@@ -734,12 +790,12 @@ int main() {
 
 
 
-		//if (delayPlayer2 > DELAY) {
-		if (continueFall(game.p2)){
-			doGravityOnBlockFall(game.p2);
+		if (delayPlayer2 > DELAY) {
+			if (continueFall(game.p2)){
+				doGravityOnBlockFall(game.p2);
+			}
+			delayPlayer2 -= DELAY;
 		}
-		//	delayPlayer2 -= DELAY;
-		//}
 		
 		if (!continueFall(game.p2)) {
 			printf("bf descendu 2 \n");
@@ -750,7 +806,7 @@ int main() {
 				nbCombinations = destroyBlock(game.p2.blocks);
 				doGravityOnAll(game.p2); 
 				if (nbCombinations > 0) {
-					penaltyReps1 += pow(2, nbCombinations);
+					penaltyReps1 += nbCombinations;
 				}
 			} while (nbCombinations > 0) ;
 			if (penaltyReps2 > 0) {
@@ -766,9 +822,30 @@ int main() {
 			}
 			printf ("end tour p2 \n");
 		}
-		
+		printf("SizePuyo = %d \n",SIZEPUYO);
 		mat2S(game.p2);
+		window.clear(Color::White);
 		
+		RectangleShape rectangle;
+		rectangle.setPosition(100, 100);
+		rectangle.setFillColor(Color::Red);
+		rectangle.setSize(Vector2f(SIZEPUYO, SIZEPUYO));
+		
+		for (int i = 0 ; i < WIDTHMAT ; i++) {
+			for (int j = 0; j < HEIGHTMAT ; j++){
+				RectangleShape cases ;
+				cases.setPosition(i*SIZEPUYO,j*SIZEPUYO);
+				cases.setFillColor(getColor(game.p1.blocks[i][j].color));   
+				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+				window.draw(cases) ;
+				cases.setPosition(450+i*SIZEPUYO,j*SIZEPUYO);
+				cases.setFillColor(getColor(game.p2.blocks[i][j].color));   
+				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+				window.draw(cases) ;
+			}
+		}
+		
+		window.display();
 
 	}
 
@@ -777,6 +854,6 @@ int main() {
 	} else {
 		printf ("player 2 gagne\n");
 	}
-
+	usleep(3000000);
 	return 0 ;
 }
