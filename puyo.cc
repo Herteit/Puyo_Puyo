@@ -9,6 +9,7 @@ using namespace std;
 using namespace sf;
 
 //on définit les constantes hors du main pour ne pas avoir à les appeler à chaque fois qu'elles sont utilisées dans un programme
+#pragma region Constante
 const int NBCOLORS = 5;
 const int HEIGHT = 600;
 const int WIDTH = 900;
@@ -32,6 +33,7 @@ const char GREEN = 'g';
 const char PURPLE = 'p';
 
 const float DELAY = 0.5f;
+#pragma endregion Constante
 
 struct Pos {
 	int x ;
