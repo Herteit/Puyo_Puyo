@@ -363,10 +363,19 @@ void resetBlocksForID (Block block[WIDTHMAT][HEIGHTMAT], int ID) {
 
 int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 	int nbrChain = 0 ; 
+	sf::SoundBuffer casser;
+	if (!casser.loadFromFile("block_casser.wav"))
+		return -1;
 	for (int k = 1 ; k < WIDTHMAT*HEIGHTMAT ; k++ ) {
 		if (countNbBlocksEqualID(mat, k)>3) {
 			resetBlocksForID(mat, k) ; 
 			nbrChain ++ ; 
+			sf::SoundBuffer casser;
+
+
+			sf::Sound sound;
+			sound.setBuffer(casser);
+			sound.play();
 		}
 	} 
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
@@ -568,7 +577,7 @@ Color getColor (char color){
 
 
 int main() {
-
+	
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
 	bool doStartTourPlayer1 = true;
 	bool doStartTourPlayer2 = true; 
