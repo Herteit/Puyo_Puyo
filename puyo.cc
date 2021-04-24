@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
+#include <SFML/Audio.hpp>
 using namespace std;
 using namespace sf;
 
