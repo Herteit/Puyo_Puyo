@@ -157,6 +157,7 @@ void startTour(Player& p1) {
 	p1.bf2 = randBlockFall();
 	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].color = p1.bf1.color1;
 	p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].exist = true;
+	p1.doStartTour = false;
 }
 
 
@@ -520,33 +521,47 @@ void right(Player& p1) {
 
 
 
-void actionsJoueur(Player& p1, bool& left, bool& right, bool& up, bool& down) {
-	if (left) {
+void actionsJoueur(Player& p1) {
+	if (p1.orient.left) {
 		if (!p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist){
 			p1.bf1.orient = LEFT;
-			left = false;
+			p1.orient.left = false;
 		}
 	}
 	
-	if (right) {
+	if (p1.orient.right) {
 		if (!p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist){
 			p1.bf1.orient = RIGHT;
-			right = false;
+			p1.orient.right = false;
 		}
 	}
 	
-	if (up) {
+	if (p1.orient.up) {
 		if (!p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist){
 			p1.bf1.orient = UP;
-			up = false;
+			p1.orient.up = false;
 		}
 	}
 	
-	if (down) {
+	if (p1.orient.down) {
 		if (!p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist){
 			p1.bf1.orient = DOWN;
-			down = false;
+			p1.orient.down = false;
 		}
+	}
+
+	if (p1.motion.left) { 
+		left(p1); 
+		p1.motion.left = false;
+	}
+
+	if (p1.motion.right) { 
+		right(p1);
+		p1.motion.right = false;
+	}
+
+	if (p1.motion.down) {
+		p1.bf1.speed = FALLSPEED*2;
 	}
 }
 
@@ -625,6 +640,36 @@ Color getColor (char color){
 	}
 }
 
+void boucleJeu(Player p1, Player p2){
+	int nbCombinations;
+	if (continueFall(p1)) {
+		if (p1.delay * p1.bf1.speed > DELAY) {
+			doGravityOnBlockFall(p1);
+			p1.delay -= DELAY / p1.bf1.speed;
+		}
+	} else {
+		blockDown(p1);
+		doGravityOnAll(p1);
+		do {
+			checkAllChains(p1.blocks);
+			nbCombinations = destroyBlock(p1.blocks);
+			doGravityOnAll(p1); 
+			if (nbCombinations > 0) {
+				p2.penalty += nbCombinations;
+			}
+		} while (nbCombinations > 0) ;
+		if (p1.penalty != 0) {
+			setMalusOnPlayer(p1, p1.penalty);
+			p1.penalty = 0; 
+		}
+		if (!blockAtStart(p1)) { 
+			p1.doStartTour = true; 
+		} else {
+			p1.gameOver = true;
+		}
+	}
+}
+
 
 void drawGame (sf::RenderWindow& window, const Player& player, int displacement) {
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
@@ -648,39 +693,14 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 int main() {
 	
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
-	bool doStartTourPlayer1 = true;
-	bool doStartTourPlayer2 = true; 
-	bool gameOver1 = false;
-	bool gameOver2 =false;
-	bool oup1 = false;
-	bool oleft1 = false;
-	bool oright1 = false;
-	bool odown1 = false; 
-	bool mleft1 = false;
-	bool mright1 = false;
-	bool mdown1 = false; 
-	bool oup2 = false;
-	bool oleft2 = false;
-	bool oright2 = false;
-	bool odown2 = false;
-	bool mleft2 = false;
-	bool mright2 = false;
-	bool mdown2 = false; 
-	int penaltyReps1 = 0;
-	int penaltyReps2 = 0;
-	int nbCombinations; 
 	Game game ;
 	sf::Clock clock; 
-
-	float delayPlayer1 = 0;
-	float delayPlayer2 = 0;
-
 
 	startGame(game);
 
 
 	//boucle principale 
-	while (window.isOpen()&&!gameOver1&&!gameOver2) {
+	while (window.isOpen()&&!game.p1.gameOver&&!game.p2.gameOver) {
 		//actions du joueur
 		sf::Event event ; 
 		while (window.pollEvent(event)) {
@@ -690,192 +710,88 @@ int main() {
 			if (event.type == sf::Event::KeyPressed) {
 				//j1
 				if (event.key.code == sf::Keyboard::Left) {
-					oleft1 = true;
+					game.p1.orient.left = true;
 				}
 				if (event.key.code == sf::Keyboard::Right) {
-					oright1 = true;
+					game.p1.orient.right = true;
 				}
 				if (event.key.code == sf::Keyboard::Up) {
-					oup1 = true;
+					game.p1.orient.up = true;
 				}
 				if (event.key.code == sf::Keyboard::Down) {
-					odown1 = true;
+					game.p1.orient.down = true;
 				}
 				if (event.key.code == sf::Keyboard::K) {
-					mleft1 = true;
+					game.p1.motion.left = true;
 				}
 				if (event.key.code == sf::Keyboard::L) {
-					mdown1 = true;
+					game.p1.motion.down = true;
 				}
 				if (event.key.code == sf::Keyboard::M) {
-					mright1 = true;
+					game.p1.motion.right = true;
 				}
 				//j2
 				if (event.key.code == sf::Keyboard::Q) {
-					oleft2 = true;
+					game.p2.orient.left = true;
 				}
 				if (event.key.code == sf::Keyboard::D) {
-					oright2 = true;
+					game.p2.orient.right = true;
 				}
 				if (event.key.code == sf::Keyboard::Z) {
-					oup2 = true;
+					game.p2.orient.up = true;
 				}
 				if (event.key.code == sf::Keyboard::S) {
-					odown2 = true;
+					game.p2.orient.down = true;
 				}
 				if (event.key.code == sf::Keyboard::C) {
-					mleft2 = true;
+					game.p2.motion.left = true;
 				}
 				if (event.key.code == sf::Keyboard::V) {
-					mdown2 = true;
+					game.p2.motion.down = true;
 				}
 				if (event.key.code == sf::Keyboard::B) {
-					mright2 = true;
+					game.p2.motion.right = true;
 				}
 			}
 			if (event.type == sf::Event::KeyReleased) {
 				if (event.key.code == sf::Keyboard::L) {
-					mdown1 = false;
+					game.p1.motion.down = false;
 				}
 				if (event.key.code == sf::Keyboard::V) {
-					mdown2 = false;
+					game.p2.motion.down = false;
 				}
 			}
 		}
 		
 		//mise jour de l'état du jeu 
 		float dt = clock.restart().asSeconds();
-		delayPlayer1 += dt;
-		delayPlayer2 += dt; 
+		game.p1.delay += dt;
+		game.p2.delay += dt; 
         
 
 
 		//1er joueur
-
-		if (doStartTourPlayer1) {
+		if (game.p1.doStartTour) {
 			startTour(game.p1);
-			doStartTourPlayer1 = false;
 		}
 		
+		actionsJoueur(game.p1);
 
-		//actions du joueur 1
+		boucleJeu(game.p1, game.p2);
 		
-		actionsJoueur(game.p1, oleft1, oright1, oup1, odown1);
-
-		//on souhaite déplacer le bf1 à gauche
-		if (mleft1) { 
-			left(game.p1); 
-			mleft1 = false;
-		}
-
-		//on souhaite déplacer le bf1 à droite
-		if (mright1) { 
-			right(game.p1);
-			mright1 = false;
-		}
-
-		//on souhaite accelerer le bf du j1
-		if (mdown1) {
-			game.p1.bf1.speed = FALLSPEED*2;
-		}
-
-
-
-		if (delayPlayer1 * game.p1.bf1.speed > DELAY) {
-			if (continueFall(game.p1)){
-				doGravityOnBlockFall(game.p1);
-			}
-			delayPlayer1 -= DELAY / game.p1.bf1.speed;
-		}
-		
-		if (!continueFall(game.p1)) {
-			blockDown(game.p1);
-			doGravityOnAll(game.p1);
-			do {
-				checkAllChains(game.p1.blocks);
-				nbCombinations = destroyBlock(game.p1.blocks);
-				doGravityOnAll(game.p1); 
-				if (nbCombinations > 0) {
-					penaltyReps2 += nbCombinations;
-				}
-			} while (nbCombinations > 0) ;
-			if (penaltyReps1 != 0) {
-				setMalusOnPlayer(game.p1, penaltyReps1);
-				penaltyReps1 = 0; 
-			}
-			if (!blockAtStart(game.p1)) { 
-				doStartTourPlayer1 = true; 
-			} else {
-				gameOver1 = true;
-			}
-		}
-
-		//mat2S(game.p1);
-
-
-
 
 
 		//2e joueur
-		if (doStartTourPlayer2) {
+		if (game.p2.doStartTour) {
 			startTour(game.p2);
-			doStartTourPlayer2 = false;
 		}
 		
+		actionsJoueur(game.p2);
 
-		//actions du joueur 2
+		boucleJeu(game.p2, game.p1);
 		
-		actionsJoueur(game.p2, oleft2, oright2, oup2, odown2);
 		
-		//on souhaite déplacer le bf1 à gauche
-		if (mleft2) { 
-			left(game.p2); 
-			mleft2 = false;
-		}
 
-		//on souhaite déplacer le bf1 à droite
-		if (mright2) { 
-			right(game.p2);
-			mright2 = false;
-		}
-
-		//on souhaite accelerer le bf du j2
-		if (mdown2) {
-			game.p2.bf1.speed = FALLSPEED*2;
-		}
-
-
-
-		if (delayPlayer2 * game.p2.bf1.speed > DELAY) {
-			if (continueFall(game.p2)){
-				doGravityOnBlockFall(game.p2);
-			}
-			delayPlayer2 -= DELAY / game.p2.bf1.speed;
-		}
-		
-		if (!continueFall(game.p2)) {
-			blockDown(game.p2);
-			doGravityOnAll(game.p2);
-			do {
-				checkAllChains(game.p2.blocks);
-				nbCombinations = destroyBlock(game.p2.blocks);
-				doGravityOnAll(game.p2); 
-				if (nbCombinations > 0) {
-					penaltyReps1 += nbCombinations;
-				}
-			} while (nbCombinations > 0) ;
-			if (penaltyReps2 > 0) {
-				setMalusOnPlayer(game.p2, penaltyReps2);
-				penaltyReps2 = 0; 
-			}
-			if (!blockAtStart(game.p2)) {
-				doStartTourPlayer2 = true; 
-			} else {
-				gameOver2 = true;
-			}
-		}
-		
-		//mat2S(game.p2);
 		
 		window.clear(Color::White);
 		
@@ -886,7 +802,7 @@ int main() {
 
 	}
 
-	if (gameOver2) {
+	if (game.p2.gameOver) {
 		printf ("player 1 gagne\n");
 	} else {
 		printf ("player 2 gagne\n");
