@@ -383,14 +383,14 @@ void resetBlocksForID (Block block[WIDTHMAT][HEIGHTMAT], int ID) {
 
 
 
-int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
+int destroyBlock (Player& player) {
 	int nbrChain = 0 ; 
 	sf::SoundBuffer casser;
 	if (!casser.loadFromFile("block_casser.wav"))
 		return -1;
 	for (int k = 1 ; k < WIDTHMAT*HEIGHTMAT ; k++ ) {
-		if (countNbBlocksEqualID(mat, k)>3) {
-			resetBlocksForID(mat, k) ; 
+		if (countNbBlocksEqualID(player.blocks, k)>3) {
+			resetBlocksForID(player.blocks, k) ; 
 			nbrChain ++ ; 
 			sf::SoundBuffer casser;
 
@@ -402,7 +402,7 @@ int destroyBlock (Block mat[WIDTHMAT][HEIGHTMAT]) {
 	} 
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
 		for (int j = 0 ; j < HEIGHTMAT ; j++) {
-			mat[i][j].groupID = 0 ; 
+			player.blocks[i][j].groupID = 0 ; 
 		}
 	}
 	return nbrChain ; 
@@ -656,7 +656,7 @@ void boucleJeu(Player& p1, Player& p2){
 		doGravityOnAll(p1);
 		do {
 			checkAllChains(p1.blocks);
-			nbCombinations = destroyBlock(p1.blocks);
+			nbCombinations = destroyBlock(p1);
 			doGravityOnAll(p1); 
 			if (nbCombinations > 0) {
 				p2.penalty += nbCombinations;
