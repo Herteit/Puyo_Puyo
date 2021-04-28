@@ -41,6 +41,19 @@ struct Pos {
 	int y ;
 };
 
+struct ChangeOrient {
+	bool left;
+	bool right;
+	bool up;
+	bool down; 
+};
+
+struct Motion {
+	bool right;
+	bool left;
+	bool down; 
+};
+
 struct Block {
 	bool exist;
 	char color;
@@ -60,6 +73,12 @@ struct Player {
 	BlockFall bf2 ;
 	Block blocks[WIDTHMAT][HEIGHTMAT] ;
 	int score ;
+	Motion motion;
+	ChangeOrient orient;
+	int penalty;
+	bool gameOver;
+	float delay;
+	bool doStartTour;
 };
 
 struct Game {
@@ -546,6 +565,36 @@ void startGame(Game& game){
 	//initialisation bf
 	game.p1.bf2=randBlockFall();
 	game.p2.bf2=game.p1.bf2;
+	
+	//initialisation constantes 
+	
+	game.p1.motion.right = false;
+	game.p1.motion.left = false;
+	game.p1.motion.down = false;
+	game.p2.motion.right = false;
+	game.p2.motion.left = false;
+	game.p2.motion.down = false;
+		
+	game.p1.orient.right = false;
+	game.p1.orient.left = false;
+	game.p1.orient.up = false;
+	game.p1.orient.down = false; 
+	game.p2.orient.right = false;
+	game.p2.orient.left = false;
+	game.p2.orient.up = false;
+	game.p2.orient.down = false; 
+	
+	game.p1.penalty = 0;
+	game.p2.penalty = 0; 
+	
+	game.p1.gameOver = false;
+	game.p2.gameOver = false;
+
+	game.p1.delay = 0;
+	game.p2.delay = 0;
+	
+	game.p1.doStartTour = true;
+	game.p2.doStartTour;
 }
 
 
