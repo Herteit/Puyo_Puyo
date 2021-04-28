@@ -686,6 +686,19 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 			window.draw(cases);
 		}
 	}
+	
+	Font font;
+	
+	font.loadFromFile("OpenSans-Regular.ttf");
+	
+	sf::Text text;
+	
+	text.setFont(font);
+	text.setString("texte");
+	text.setCharacterSize(20);
+	text.setFillColor(Color::Red);
+	text.setPosition(Vector2f(450, 450));
+	window.draw(text);
 
 }
 
