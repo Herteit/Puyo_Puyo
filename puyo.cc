@@ -611,6 +611,9 @@ void startGame(Game& game){
 	
 	game.p1.doStartTour = true;
 	game.p2.doStartTour = true;
+
+	game.p1.score = 0;
+	game.p2.score = 0;
 }
 
 
@@ -657,6 +660,7 @@ void boucleJeu(Player& p1, Player& p2){
 			doGravityOnAll(p1); 
 			if (nbCombinations > 0) {
 				p2.penalty += nbCombinations;
+				p1.score += nbCombinations * 100;
 			}
 		} while (nbCombinations > 0) ;
 		if (p1.penalty != 0) {
@@ -695,10 +699,10 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 	sf::Text text;
 	
 	text.setFont(font);
-	text.setString("texte");
+	text.setString(to_string(player.score));
 	text.setCharacterSize(20);
 	text.setFillColor(Color::Red);
-	text.setPosition(Vector2f(450, 450));
+	text.setPosition(Vector2f(200 + displacement, 450));
 	window.draw(text);
 
 }
