@@ -626,6 +626,25 @@ Color getColor (char color){
 }
 
 
+void drawGame (sf::RenderWindow& window, const Player& player, int displacement) {
+	for (int i = 0 ; i < WIDTHMAT ; i++) {
+		for (int j = 0; j < HEIGHTMAT ; j++){
+			RectangleShape cases ;
+			cases.setPosition(displacement + i*SIZEPUYO,j*SIZEPUYO);
+			Pos pos = getPosSecondBlock(player);
+			if (i == pos.x && j == pos.y){
+				cases.setFillColor(getColor(player.bf1.color2));
+			} else {
+				cases.setFillColor(getColor(player.blocks[i][j].color));   
+			}
+			cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+			window.draw(cases);
+		}
+	}
+
+}
+
+
 int main() {
 	
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
@@ -860,30 +879,9 @@ int main() {
 		
 		window.clear(Color::White);
 		
-		for (int i = 0 ; i < WIDTHMAT ; i++) {
-			for (int j = 0; j < HEIGHTMAT ; j++){
-				RectangleShape cases ;
-				cases.setPosition(i*SIZEPUYO,j*SIZEPUYO);
-				Pos pos = getPosSecondBlock(game.p2);
-				if (i == pos.x && j == pos.y){
-					cases.setFillColor(getColor(game.p2.bf1.color2));
-				} else {
-					cases.setFillColor(getColor(game.p2.blocks[i][j].color));   
-				}
-				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
-				window.draw(cases);
-				cases.setPosition(450+i*SIZEPUYO,j*SIZEPUYO);
-				pos = getPosSecondBlock(game.p1);
-				if (i == pos.x && j == pos.y){
-					cases.setFillColor(getColor(game.p1.bf1.color2));
-				} else {
-					cases.setFillColor(getColor(game.p1.blocks[i][j].color));   
-				}  
-				cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
-				window.draw(cases);
-			}
-		}
-		
+		drawGame(window, game.p2, 0);
+		drawGame(window, game.p1, 450);
+
 		window.display();
 
 	}
