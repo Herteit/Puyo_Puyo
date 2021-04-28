@@ -640,7 +640,7 @@ Color getColor (char color){
 	}
 }
 
-void boucleJeu(Player p1, Player p2){
+void boucleJeu(Player& p1, Player& p2){
 	int nbCombinations;
 	if (continueFall(p1)) {
 		if (p1.delay * p1.bf1.speed > DELAY) {
