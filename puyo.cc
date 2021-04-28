@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics/Font.hpp>
 using namespace std;
 using namespace sf;
 
