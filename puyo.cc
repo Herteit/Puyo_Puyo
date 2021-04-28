@@ -594,7 +594,7 @@ void startGame(Game& game){
 	game.p2.delay = 0;
 	
 	game.p1.doStartTour = true;
-	game.p2.doStartTour;
+	game.p2.doStartTour = true;
 }
 
 
