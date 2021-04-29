@@ -34,7 +34,7 @@ const char BLUE = 'b';
 const char GREEN = 'g';
 const char PURPLE = 'p';
 
-const float DELAY = 0.5f;
+const float DELAY = 0.7f;
 #pragma endregion Constante
 
 struct Pos {
@@ -524,31 +524,31 @@ void right(Player& p1) {
 
 void actionsJoueur(Player& p1) {
 	if (p1.orient.left) {
-		if (!p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist){
+		if (!p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist && p1.bf1.posMat.x - 1 >= 0){
 			p1.bf1.orient = LEFT;
-			p1.orient.left = false;
 		}
+		p1.orient.left = false;
 	}
 	
 	if (p1.orient.right) {
-		if (!p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist){
+		if (!p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist && p1.bf1.posMat.x + 1 < WIDTHMAT){
 			p1.bf1.orient = RIGHT;
-			p1.orient.right = false;
 		}
+		p1.orient.right = false;
 	}
 	
 	if (p1.orient.up) {
 		if (!p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist){
 			p1.bf1.orient = UP;
-			p1.orient.up = false;
 		}
+		p1.orient.up = false;
 	}
 	
 	if (p1.orient.down) {
 		if (!p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist){
 			p1.bf1.orient = DOWN;
-			p1.orient.down = false;
 		}
+		p1.orient.down = false;
 	}
 
 	if (p1.motion.left) { 
@@ -562,7 +562,7 @@ void actionsJoueur(Player& p1) {
 	}
 
 	if (p1.motion.down) {
-		p1.bf1.speed = FALLSPEED*2;
+		p1.bf1.speed = FALLSPEED*3;
 	}
 }
 
@@ -823,7 +823,11 @@ int main() {
 	if (game.p2.gameOver) {
 		printf ("player 1 gagne\n");
 	} else {
-		printf ("player 2 gagne\n");
+		if (game.p1.gameOver){
+			printf ("player 2 gagne\n");
+		} else {
+			printf ("c cassé\n");
+		}
 	}
 	usleep(3000000);
 	return 0 ;
