@@ -321,7 +321,7 @@ int countNbBlocksEqualID (Player& player, int ID) {
 	int nb = 0; 
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
 		for (int j = 0 ; j < HEIGHTMAT ; j++) {
-			if (player.blocks[i][j].groupID == ID && player.blocks[i][j].color != VOID && pplayer.blocks[i][j].color != WHITE) {
+			if (player.blocks[i][j].groupID == ID && player.blocks[i][j].color != VOID && player.blocks[i][j].color != WHITE) {
 				nb ++ ;
 			}
 		}
