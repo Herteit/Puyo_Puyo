@@ -263,7 +263,7 @@ void blockDown (Player& p1) {
 
 
 
-int AttribuerGroupe ( Block mat[WIDTHMAT][HEIGHTMAT] , Pos posBlock ,  int groupID ){
+int AttribuerGroupe ( Player& player , Pos posBlock ,  int groupID ){
 	int x;
 	int y;
 	int longueurChaine=0;
@@ -276,13 +276,13 @@ int AttribuerGroupe ( Block mat[WIDTHMAT][HEIGHTMAT] , Pos posBlock ,  int group
 			y = posBlock.y +i -2;
 		}
 		if (x >= 0 && x < WIDTHMAT && y >= 0 && y < HEIGHTMAT)  {
-			if ( mat[x][y].exist ) {
-				if ( mat[posBlock.x][posBlock.y].color == mat[x][y].color && mat[x][y].groupID == 0) {
-					mat[x][y].groupID = groupID;
+			if ( player.blocks[x][y].exist ) {
+				if ( player.blocks[posBlock.x][posBlock.y].color == player.blocks[x][y].color && player.blocks[x][y].groupID == 0) {
+					player.blocks[x][y].groupID = groupID;
 					Pos pos ;
 					pos.x = x;
 					pos.y = y;
-					longueurChaine += (1 + AttribuerGroupe ( mat ,pos , groupID ));
+					longueurChaine += (1 + AttribuerGroupe ( player ,pos , groupID ));
 				}
 			}
 		}
@@ -292,15 +292,15 @@ int AttribuerGroupe ( Block mat[WIDTHMAT][HEIGHTMAT] , Pos posBlock ,  int group
 
 
 
-void checkAllChains ( Block mat[WIDTHMAT][HEIGHTMAT]) {
+void checkAllChains (Player& player) {
 	int baseGroupId = 1;
 	for (int i = 0; i < WIDTHMAT; i++) {
 		for (int j = 0; j < HEIGHTMAT; j++) {
-			if (mat[i][j].exist && mat[i][j].groupID == 0) {
+			if (player.blocks[i][j].exist && player.blocks[i][j].groupID == 0) {
 				Pos pos;
 				pos.x = i;
 				pos.y = j;
-				int longueur = AttribuerGroupe (mat ,pos ,baseGroupId ) ;
+				int longueur = AttribuerGroupe (player ,pos ,baseGroupId ) ;
 				if (longueur > 0) {
 				baseGroupId += 1 ;
 				}
@@ -317,11 +317,11 @@ bool blockAtStart (const Player& player) {
 
 
 
-int countNbBlocksEqualID (Block mat[WIDTHMAT][HEIGHTMAT], int ID) {
+int countNbBlocksEqualID (Player& player, int ID) {
 	int nb = 0; 
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
 		for (int j = 0 ; j < HEIGHTMAT ; j++) {
-			if (mat[i][j].groupID == ID && mat[i][j].color != VOID && mat[i][j].color != WHITE) {
+			if (player.blocks[i][j].groupID == ID && player.blocks[i][j].color != VOID && pplayer.blocks[i][j].color != WHITE) {
 				nb ++ ;
 			}
 		}
@@ -345,35 +345,34 @@ void setMalusOnPlayer (Player& p1, int reps) {
 }
 
 
-
-void resetBlocksForID (Block block[WIDTHMAT][HEIGHTMAT], int ID) {
+void resetBlocksForID (Player& player, int ID) {
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
 		for (int j = 0 ; j < HEIGHTMAT ; j++) {
-			if (block[i][j].groupID == ID && block[i][j].color != WHITE) {
-				block[i][j].exist = false ;
-				block[i][j].color = VOID ; 
+			if (player.blocks[i][j].groupID == ID && player.blocks[i][j].color != WHITE) {
+				player.blocks[i][j].exist = false ;
+				player.blocks[i][j].color = VOID ; 
 				if (j+1 < HEIGHTMAT){
-					if (block[i][j+1].color == WHITE) {
-						block[i][j+1].exist = false ; 
-						block[i][j+1].color = VOID ; 
+					if (player.blocks[i][j+1].color == WHITE) {
+						player.blocks[i][j+1].exist = false ; 
+						player.blocks[i][j+1].color = VOID ; 
 					}
 				}
 				if (j-1 > 0){
-					if (block[i][j-1].color == WHITE) {
-						block[i][j-1].exist = false ; 
-						block[i][j-1].color = VOID ; 
+					if (player.blocks[i][j-1].color == WHITE) {
+						player.blocks[i][j-1].exist = false ; 
+						player.blocks[i][j-1].color = VOID ; 
 					}
 				}
 				if (i-1 > 0){
-					if (block[i-1][j].color == WHITE) {
-						block[i-1][j].exist = false ; 
-						block[i-1][j].color = VOID ; 
+					if (player.blocks[i-1][j].color == WHITE) {
+						player.blocks[i-1][j].exist = false ; 
+						player.blocks[i-1][j].color = VOID ; 
 					}
 				}
 				if (i+1 < WIDTHMAT){
-					if (block[i+1][j].color == WHITE) {
-						block[i+1][j].exist = false ; 
-						block[i+1][j].color = VOID ; 
+					if (player.blocks[i+1][j].color == WHITE) {
+						player.blocks[i+1][j].exist = false ; 
+						player.blocks[i+1][j].color = VOID ; 
 					}
 				}
 			}
@@ -389,8 +388,8 @@ int destroyBlock (Player& player) {
 	if (!casser.loadFromFile("block_casser.wav"))
 		return -1;
 	for (int k = 1 ; k < WIDTHMAT*HEIGHTMAT ; k++ ) {
-		if (countNbBlocksEqualID(player.blocks, k)>3) {
-			resetBlocksForID(player.blocks, k) ; 
+		if (countNbBlocksEqualID(player, k)>3) {
+			resetBlocksForID(player, k) ; 
 			nbrChain ++ ; 
 			sf::SoundBuffer casser;
 
@@ -407,6 +406,7 @@ int destroyBlock (Player& player) {
 	}
 	return nbrChain ; 
 }
+
 
 
 
@@ -655,7 +655,7 @@ void boucleJeu(Player& p1, Player& p2){
 		blockDown(p1);
 		doGravityOnAll(p1);
 		do {
-			checkAllChains(p1.blocks);
+			checkAllChains(p1);
 			nbCombinations = destroyBlock(p1);
 			doGravityOnAll(p1); 
 			if (nbCombinations > 0) {
