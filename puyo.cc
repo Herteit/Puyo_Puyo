@@ -4,7 +4,6 @@
 #include <math.h>
 #include <iostream>
 #include <stdio.h>
-#include <unistd.h>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics/Font.hpp>
 using namespace std;
@@ -13,13 +12,13 @@ using namespace sf;
 //on définit les constantes hors du main pour ne pas avoir à les appeler à chaque fois qu'elles sont utilisées dans un programme
 #pragma region Constante
 const int NBCOLORS = 5;
-const int HEIGHT = 600;
-const int WIDTH = 900;
+const int HEIGHT = 720;
+const int WIDTH = 1000;
 const int FALLSPEED = 1;
-const int SIZEPUYO = WIDTH/30;
+const int SIZEPUYO = 60;
 const int WIDTHMAT = 6;
 const int HEIGHTMAT = 12; 
-const int WAITINGPOSX = WIDTH /2 - SIZEPUYO;
+const int WAITINGPOSX = WIDTH /2 - 90;
 const int WAITINGPOSY = 100;
 const int LEFT = 0;
 const int UP = 1;
@@ -433,29 +432,6 @@ Pos getPosSecondBlock (const Player& player){
 
 
 
-void mat2S(Player p) {
-	//determination emplacement 2nd partie du bf
-	Pos pos = getPosSecondBlock(p);
-
-	//affichage de la matrice avec la 2nd partie du bf
-	for (int i = 0; i < WIDTHMAT; i++) {
-		printf ("[");
-		for (int j = 0; j < HEIGHTMAT; j++) {
-			if (pos.x == i && pos.y == j) {
-				printf ("%c", p.bf1.color2);
-			} else {
-				printf ("%c", p.blocks[i][j].color);
-			}
-			if (j!=HEIGHTMAT-1) {
-				printf ("\t");
-			}
-		}
-		printf ("]\n");
-	}
-}
-
-
-
 void left(Player& p1) {
 	int dep = false;
 	//on verifie si c'est possible
@@ -692,19 +668,83 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 		}
 	}
 	
-	Font font;
-	
+	RectangleShape waitingBF ;
+	waitingBF.setPosition(WAITINGPOSX + (displacement /16), WAITINGPOSY + (displacement/5));
+	waitingBF.setFillColor(getColor(player.bf2.color1));
+	waitingBF.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+	window.draw(waitingBF);
+	waitingBF.setPosition(WAITINGPOSX + SIZEPUYO + (displacement /16 ), WAITINGPOSY + (displacement/5));
+	waitingBF.setFillColor(getColor(player.bf2.color2));
+	window.draw(waitingBF);
+
+	Font font;	
 	font.loadFromFile("OpenSans-Regular.ttf");
-	
 	sf::Text text;
-	
 	text.setFont(font);
 	text.setString(to_string(player.score));
 	text.setCharacterSize(20);
-	text.setFillColor(Color::Red);
-	text.setPosition(Vector2f(200 + displacement, 450));
+	text.setFillColor(Color::Black);
+	if (displacement ==0){
+		text.setPosition(Vector2f(410, 550));
+	} else {
+		text.setPosition(Vector2f(displacement - 80, 550));
+	}
+	window.draw(text);
+	
+	text.setString("Player 1 : ");
+	text.setPosition(Vector2f(390, 500));
+	window.draw(text);
+	
+	text.setString("Player 2 : ");
+	text.setPosition(Vector2f(displacement - 100, 500));
 	window.draw(text);
 
+}
+
+
+void drawEndOfGame (sf::RenderWindow& window, Game& game){
+	window.clear(Color::Black);
+	
+	Font font;
+	font.loadFromFile("OpenSans-Regular.ttf");
+	sf::Text text;
+	
+	text.setFont(font);
+	text.setString("Game Over");
+	text.setCharacterSize(60);
+	text.setFillColor(Color::White);
+	text.setPosition(Vector2f(300, 50));
+	window.draw(text);
+	
+	String player1, player2;
+	
+	if (game.p1.gameOver){
+		player1 = "Player 1 lost";
+		player2 = "Player 2 won";
+	} else {
+		player2 = "Player 2 lost";
+		player1 = "Player 1 won";	
+	}
+	
+	text.setString(player1);
+	text.setCharacterSize(30);
+	text.setPosition(Vector2f(150, 200));
+	window.draw(text);
+	text.setString(player2);
+	text.setPosition(Vector2f(500, 200));
+
+	window.draw(text);
+	
+	player1 = "Score : " + to_string(game.p1.score);
+	player2 = "Score : " + to_string(game.p2.score);
+	text.setString(player1);
+	text.setPosition(Vector2f(150, 250));
+	window.draw(text);
+	text.setString(player2);
+	text.setPosition(Vector2f(500, 250));
+	window.draw(text);
+	
+	window.display();
 }
 
 
@@ -814,21 +854,20 @@ int main() {
 		window.clear(Color::White);
 		
 		drawGame(window, game.p2, 0);
-		drawGame(window, game.p1, 450);
+		drawGame(window, game.p1, 640);
 
 		window.display();
 
 	}
-
-	if (game.p2.gameOver) {
-		printf ("player 1 gagne\n");
-	} else {
-		if (game.p1.gameOver){
-			printf ("player 2 gagne\n");
-		} else {
-			printf ("c cassé\n");
+	while (window.isOpen()) {
+		sf::Event event ; 
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+			}
 		}
+		drawEndOfGame(window,game);
 	}
-	usleep(3000000);
+	
 	return 0 ;
 }
