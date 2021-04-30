@@ -543,6 +543,24 @@ void actionsJoueur(Player& p1) {
 }
 
 
+void startPlayer(Player& player){
+	player.motion.right = false;
+	player.motion.left = false;
+	player.motion.down = false;
+		
+	player.orient.right = false;
+	player.orient.left = false;
+	player.orient.up = false;
+	player.orient.down = false;
+	
+	player.penalty = 0;
+	player.gameOver = false;
+	player.delay = 0;
+	player.doStartTour = true;
+	player.score = 0;
+}
+
+
 
 void startGame(Game& game){
 	//initialisation de la matrice	
@@ -560,36 +578,8 @@ void startGame(Game& game){
 	
 	//initialisation constantes 
 	
-	game.p1.motion.right = false;
-	game.p1.motion.left = false;
-	game.p1.motion.down = false;
-	game.p2.motion.right = false;
-	game.p2.motion.left = false;
-	game.p2.motion.down = false;
-		
-	game.p1.orient.right = false;
-	game.p1.orient.left = false;
-	game.p1.orient.up = false;
-	game.p1.orient.down = false; 
-	game.p2.orient.right = false;
-	game.p2.orient.left = false;
-	game.p2.orient.up = false;
-	game.p2.orient.down = false; 
-	
-	game.p1.penalty = 0;
-	game.p2.penalty = 0; 
-	
-	game.p1.gameOver = false;
-	game.p2.gameOver = false;
-
-	game.p1.delay = 0;
-	game.p2.delay = 0;
-	
-	game.p1.doStartTour = true;
-	game.p2.doStartTour = true;
-
-	game.p1.score = 0;
-	game.p2.score = 0;
+	startPlayer(game.p1);
+	startPlayer(game.p2);
 }
 
 
@@ -702,7 +692,7 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 }
 
 
-void drawEndOfGame (sf::RenderWindow& window, Game& game){
+void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	window.clear(Color::Black);
 	
 	Font font;
@@ -849,8 +839,6 @@ int main() {
 		boucleJeu(game.p2, game.p1);
 		
 		
-
-		
 		window.clear(Color::White);
 		
 		drawGame(window, game.p2, 0);
@@ -859,6 +847,7 @@ int main() {
 		window.display();
 
 	}
+	
 	while (window.isOpen()) {
 		sf::Event event ; 
 		while (window.pollEvent(event)) {
