@@ -696,21 +696,21 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 	sf::Text text;
 	text.setFont(font);
 	text.setString(to_string(player.score));
-	text.setCharacterSize(20);
+	text.setCharacterSize((int)22*WIDTH/1000);
 	text.setFillColor(Color::Black);
 	if (displacement ==0){
-		text.setPosition(Vector2f(410, 550));
+		text.setPosition(Vector2f(410*WIDTH/1000, 550*HEIGHT/720));
 	} else {
-		text.setPosition(Vector2f(displacement - 80, 550));
+		text.setPosition(Vector2f(displacement - 100*WIDTH/1000, 550*HEIGHT/720));
 	}
 	window.draw(text);
 	
 	text.setString("Player 1 : ");
-	text.setPosition(Vector2f(390, 500));
+	text.setPosition(Vector2f(390*WIDTH/1000, 500*HEIGHT/720));
 	window.draw(text);
 	
 	text.setString("Player 2 : ");
-	text.setPosition(Vector2f(displacement - 100, 500));
+	text.setPosition(Vector2f(displacement - 120*WIDTH/1000, 500*HEIGHT/720));
 	window.draw(text);
 
 }
@@ -725,9 +725,9 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	
 	text.setFont(font);
 	text.setString("Game Over");
-	text.setCharacterSize(60);
+	text.setCharacterSize((int) WIDTH*65/1000);
 	text.setFillColor(Color::White);
-	text.setPosition(Vector2f(300, 50));
+	text.setPosition(Vector2f(WIDTH/3, 50));
 	window.draw(text);
 	
 	String player1, player2;
@@ -741,21 +741,21 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	}
 	
 	text.setString(player1);
-	text.setCharacterSize(30);
-	text.setPosition(Vector2f(150, 200));
+	text.setCharacterSize((int)30*WIDTH/1000);
+	text.setPosition(Vector2f(WIDTH/5, 200));
 	window.draw(text);
 	text.setString(player2);
-	text.setPosition(Vector2f(500, 200));
+	text.setPosition(Vector2f(WIDTH-2*WIDTH/5, 200));
 
 	window.draw(text);
 	
 	player1 = "Score : " + to_string(game.p1.score);
 	player2 = "Score : " + to_string(game.p2.score);
 	text.setString(player1);
-	text.setPosition(Vector2f(150, 250));
+	text.setPosition(Vector2f(WIDTH/5, 250));
 	window.draw(text);
 	text.setString(player2);
-	text.setPosition(Vector2f(500, 250));
+	text.setPosition(Vector2f(WIDTH-2*WIDTH/5, 250));
 	window.draw(text);
 	
 	window.display();
@@ -853,7 +853,7 @@ int main() {
 		
 		window.clear(Color::White);
 		
-		drawGame(window, game.p2, 640);
+		drawGame(window, game.p2, 640*WIDTH/1000);
 		drawGame(window, game.p1, 0);
 
 		window.display();
