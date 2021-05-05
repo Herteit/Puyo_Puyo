@@ -42,10 +42,8 @@ struct Pos {
 };
 
 struct ChangeOrient {
-	bool left;
-	bool right;
-	bool up;
-	bool down; 
+	bool clockwise;
+	bool anticlockwise;
 };
 
 struct Motion {
@@ -499,32 +497,44 @@ void right(Player& p1) {
 
 
 void actionsJoueur(Player& p1) {
-	if (p1.orient.left) {
-		if (!p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist && p1.bf1.posMat.x - 1 >= 0){
-			p1.bf1.orient = LEFT;
+	bool doChange = false;
+	if (p1.orient.clockwise) {
+		if (p1.bf1.orient == LEFT){
+			doChange = (p1.bf1.posMat.y - 1 >=0 && !p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist);
 		}
-		p1.orient.left = false;
+		if (p1.bf1.orient == RIGHT){
+			doChange = (p1.bf1.posMat.y + 1 < HEIGHTMAT && !p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist);
+		}
+		if (p1.bf1.orient == UP){
+			doChange = (p1.bf1.posMat.x + 1 < WIDTHMAT && !p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist);
+		}
+		if (p1.bf1.orient == DOWN){
+			doChange = (p1.bf1.posMat.x - 1 >=0 && !p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist);
+		}
+		
+		if (doChange){
+			p1.bf1.orient = (p1.bf1.orient + 1) % 4;
+		}
+		p1.orient.clockwise = false;
 	}
 	
-	if (p1.orient.right) {
-		if (!p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist && p1.bf1.posMat.x + 1 < WIDTHMAT){
-			p1.bf1.orient = RIGHT;
+	if (p1.orient.anticlockwise) {
+		if (p1.bf1.orient == RIGHT){
+			doChange = (p1.bf1.posMat.y - 1 >=0 && !p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist);
 		}
-		p1.orient.right = false;
-	}
-	
-	if (p1.orient.up) {
-		if (!p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist){
-			p1.bf1.orient = UP;
+		if (p1.bf1.orient == LEFT){
+			doChange = (p1.bf1.posMat.y + 1 < HEIGHTMAT && !p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist);
 		}
-		p1.orient.up = false;
-	}
-	
-	if (p1.orient.down) {
-		if (!p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist){
-			p1.bf1.orient = DOWN;
+		if (p1.bf1.orient == DOWN){
+			doChange = (p1.bf1.posMat.x + 1 < WIDTHMAT && !p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist);
 		}
-		p1.orient.down = false;
+		if (p1.bf1.orient == UP){
+			doChange = (p1.bf1.posMat.x - 1 >=0 && !p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist);
+		}
+		if (doChange){
+			p1.bf1.orient = (p1.bf1.orient + 3) % 4;
+		}
+		p1.orient.anticlockwise = false;
 	}
 
 	if (p1.motion.left) { 
@@ -540,6 +550,10 @@ void actionsJoueur(Player& p1) {
 	if (p1.motion.down) {
 		p1.bf1.speed = FALLSPEED*3;
 	}
+	
+	if (!p1.motion.down) {
+		p1.bf1.speed = FALLSPEED;
+	}
 }
 
 
@@ -548,10 +562,8 @@ void startPlayer(Player& player){
 	player.motion.left = false;
 	player.motion.down = false;
 		
-	player.orient.right = false;
-	player.orient.left = false;
-	player.orient.up = false;
-	player.orient.down = false;
+	player.orient.clockwise = false;
+	player.orient.anticlockwise = false;
 	
 	player.penalty = 0;
 	player.gameOver = false;
@@ -757,55 +769,43 @@ int main() {
 			}
 			if (event.type == sf::Event::KeyPressed) {
 				//j1
-				if (event.key.code == sf::Keyboard::Left) {
-					game.p1.orient.left = true;
+				if (event.key.code == sf::Keyboard::R) {
+					game.p1.orient.clockwise = true;
 				}
-				if (event.key.code == sf::Keyboard::Right) {
-					game.p1.orient.right = true;
-				}
-				if (event.key.code == sf::Keyboard::Up) {
-					game.p1.orient.up = true;
-				}
-				if (event.key.code == sf::Keyboard::Down) {
-					game.p1.orient.down = true;
-				}
-				if (event.key.code == sf::Keyboard::K) {
-					game.p1.motion.left = true;
-				}
-				if (event.key.code == sf::Keyboard::L) {
-					game.p1.motion.down = true;
-				}
-				if (event.key.code == sf::Keyboard::M) {
-					game.p1.motion.right = true;
-				}
-				//j2
-				if (event.key.code == sf::Keyboard::Q) {
-					game.p2.orient.left = true;
+				if (event.key.code == sf::Keyboard::F) {
+					game.p1.orient.anticlockwise = true;
 				}
 				if (event.key.code == sf::Keyboard::D) {
-					game.p2.orient.right = true;
+					game.p1.motion.left = true;
 				}
-				if (event.key.code == sf::Keyboard::Z) {
-					game.p2.orient.up = true;
+				if (event.key.code == sf::Keyboard::G) {
+					game.p1.motion.right = true;
 				}
-				if (event.key.code == sf::Keyboard::S) {
-					game.p2.orient.down = true;
+				if (event.key.code == sf::Keyboard::Space) {
+					game.p1.motion.down = true;
 				}
-				if (event.key.code == sf::Keyboard::C) {
+				//j2
+				if (event.key.code == sf::Keyboard::Left) {
 					game.p2.motion.left = true;
 				}
-				if (event.key.code == sf::Keyboard::V) {
-					game.p2.motion.down = true;
-				}
-				if (event.key.code == sf::Keyboard::B) {
+				if (event.key.code == sf::Keyboard::Right) {
 					game.p2.motion.right = true;
+				}
+				if (event.key.code == sf::Keyboard::Up) {
+					game.p2.orient.clockwise = true;
+				}
+				if (event.key.code == sf::Keyboard::Down) {
+					game.p2.orient.anticlockwise = true;
+				}
+				if (event.key.code == sf::Keyboard::Enter) {
+					game.p2.motion.down = true;
 				}
 			}
 			if (event.type == sf::Event::KeyReleased) {
-				if (event.key.code == sf::Keyboard::L) {
+				if (event.key.code == sf::Keyboard::Space) {
 					game.p1.motion.down = false;
 				}
-				if (event.key.code == sf::Keyboard::V) {
+				if (event.key.code == sf::Keyboard::Enter) {
 					game.p2.motion.down = false;
 				}
 			}
@@ -841,8 +841,8 @@ int main() {
 		
 		window.clear(Color::White);
 		
-		drawGame(window, game.p2, 0);
-		drawGame(window, game.p1, 640);
+		drawGame(window, game.p2, 640);
+		drawGame(window, game.p1, 0);
 
 		window.display();
 
