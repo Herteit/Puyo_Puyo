@@ -749,6 +749,120 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	window.display();
 }
 
+void drawStart (sf::RenderWindow& window){
+	window.clear(Color::Black);
+	
+	Font font;
+	font.loadFromFile("OpenSans-Regular.ttf");
+	sf::Text text;
+	text.setFont(font);
+	
+	text.setCharacterSize(110);
+	text.setString("PUYO PUYO");
+	text.setPosition(Vector2f(200, 80));
+	text.setFillColor(Color::White);
+	window.draw(text);
+	
+	text.setCharacterSize(40);
+	text.setString("Player 1");
+	text.setPosition(Vector2f(160, 280));
+	window.draw(text);
+	
+	text.setString("Player 2");
+	text.setPosition(Vector2f(680, 280));
+	window.draw(text);
+	
+	RectangleShape touche;
+	touche.setPosition(200, 400);
+	touche.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+	window.draw(touche);
+	touche.setPosition(200, 480);
+	window.draw(touche);
+	touche.setPosition(120, 480);
+	window.draw(touche);
+	touche.setPosition(280, 480);
+	window.draw(touche);
+	touche.setPosition(120, 600);
+	touche.setSize(Vector2f(160 + SIZEPUYO,SIZEPUYO));
+	window.draw(touche);
+	
+	touche.setPosition(720, 400);
+	touche.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+	window.draw(touche);
+	touche.setPosition(720, 480);
+	window.draw(touche);
+	touche.setPosition(640, 480);
+	window.draw(touche);
+	touche.setPosition(800, 480);
+	window.draw(touche);
+	touche.setPosition(640, 600);
+	touche.setSize(Vector2f(160 + SIZEPUYO,SIZEPUYO));
+	window.draw(touche);
+	
+	text.setString("R");
+	text.setFillColor(Color::Black);
+	text.setPosition(Vector2f(215, 405));
+	window.draw(text);
+	text.setString("F");
+	text.setPosition(Vector2f(220, 485));
+	window.draw(text);
+	text.setString("D");
+	text.setPosition(Vector2f(135, 485));
+	window.draw(text);
+	text.setString("G");
+	text.setPosition(Vector2f(295, 485));
+	window.draw(text);
+	text.setString("Space");
+	text.setPosition(Vector2f(165, 605));
+	window.draw(text);
+	text.setString("RShift");
+	text.setPosition(Vector2f(695, 605));
+	window.draw(text);
+	text.setString("^");
+	text.setPosition(Vector2f(740, 405));
+	window.draw(text);
+	text.setString("<");
+	text.setPosition(Vector2f(655, 485));
+	window.draw(text);
+	text.setString(">");
+	text.setPosition(Vector2f(815, 485));
+	window.draw(text);
+	text.setString("v");
+	text.setPosition(Vector2f(740, 485));
+	window.draw(text);
+	
+	text.setFillColor(Color::White);
+	text.setCharacterSize(20);
+	text.setString("-- Press Space and RShift to start --");
+	text.setPosition(Vector2f(340, 40));
+	window.draw(text);
+	
+	window.display();
+
+}
+
+void firstPage (sf::RenderWindow& window){
+	bool space = false;
+	bool shift = false;
+	while (window.isOpen() || (space && shift)) {
+		sf::Event event ; 
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed) {
+				window.close();
+			}
+			if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == sf::Keyboard::Space) {
+					space = true;
+				}
+				if (event.key.code == sf::Keyboard::RShift) {
+					shift = true;
+				}
+			}
+		}
+		drawStart(window);
+	}
+}
+
 
 int main() {
 	
@@ -758,7 +872,8 @@ int main() {
 
 	startGame(game);
 
-
+	firstPage(window);
+	
 	//boucle principale 
 	while (window.isOpen()&&!game.p1.gameOver&&!game.p2.gameOver) {
 		//actions du joueur
@@ -855,7 +970,7 @@ int main() {
 				window.close();
 			}
 		}
-		drawEndOfGame(window,game);
+		drawEndOfGame(window, game);
 	}
 	
 	return 0 ;
