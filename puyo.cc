@@ -10,7 +10,7 @@ using namespace std;
 using namespace sf;
 
 //on définit les constantes hors du main pour ne pas avoir à les appeler à chaque fois qu'elles sont utilisées dans un programme
-#pragma region Constante
+
 const int NBCOLORS = 5;
 const int HEIGHT = 720;
 const int WIDTH = 1000;
@@ -34,7 +34,6 @@ const char GREEN = 'g';
 const char PURPLE = 'p';
 
 const float DELAY = 0.7f;
-#pragma endregion Constante
 
 struct Pos {
 	int x ;
@@ -658,10 +657,10 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 	for (int i = 0 ; i < WIDTHMAT ; i++) {
 		for (int j = 0; j < HEIGHTMAT ; j++){
 			RectangleShape cases ;
-			cases.setPosition(displacement + i*SIZEPUYO,j*SIZEPUYO);
 			Pos pos = getPosSecondBlock(player);
-			if (i == pos.x && j == pos.y){
-				cases.setFillColor(getColor(player.bf1.color2));
+			cases.setPosition(displacement + i*SIZEPUYO,j*SIZEPUYO);
+			if ((i == pos.x && j == pos.y)||(i == player.bf1.posMat.x && j == player.bf1.posMat.y)){
+				cases.setFillColor(getColor(VOID));
 			} else {
 				cases.setFillColor(getColor(player.blocks[i][j].color));   
 			}
@@ -669,7 +668,20 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 			window.draw(cases);
 		}
 	}
-	
+
+	RectangleShape cases ;
+	cases.setPosition(displacement + player.bf1.posMat.x*SIZEPUYO,player.bf1.posMat.y*SIZEPUYO+SIZEPUYO/DELAY*player.delay*player.bf1.speed);
+	cases.setFillColor(getColor(player.bf1.color1));
+	cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+	window.draw(cases);
+
+	Pos pos = getPosSecondBlock(player);
+	cases.setPosition(displacement + pos.x*SIZEPUYO,pos.y*SIZEPUYO+SIZEPUYO/DELAY*player.delay*player.bf1.speed);
+	cases.setFillColor(getColor(player.bf1.color2));
+	cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
+	window.draw(cases);
+		
+
 	RectangleShape waitingBF ;
 	waitingBF.setPosition(WAITINGPOSX + (displacement /16), WAITINGPOSY + (displacement/5));
 	waitingBF.setFillColor(getColor(player.bf2.color1));
@@ -797,7 +809,7 @@ int main() {
 				if (event.key.code == sf::Keyboard::Down) {
 					game.p2.orient.anticlockwise = true;
 				}
-				if (event.key.code == sf::Keyboard::Enter) {
+				if (event.key.code == sf::Keyboard::RShift) {
 					game.p2.motion.down = true;
 				}
 			}
@@ -805,7 +817,7 @@ int main() {
 				if (event.key.code == sf::Keyboard::Space) {
 					game.p1.motion.down = false;
 				}
-				if (event.key.code == sf::Keyboard::Enter) {
+				if (event.key.code == sf::Keyboard::RShift) {
 					game.p2.motion.down = false;
 				}
 			}
