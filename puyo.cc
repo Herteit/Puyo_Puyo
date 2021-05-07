@@ -856,7 +856,7 @@ void drawStart (sf::RenderWindow& window){
 void firstPage (sf::RenderWindow& window){
 	bool space = false;
 	bool shift = false;
-	while (window.isOpen() || (space && shift)) {
+	while (window.isOpen() && (!space || !shift)) {
 		sf::Event event ; 
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
