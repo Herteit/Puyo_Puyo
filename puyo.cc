@@ -727,7 +727,7 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	text.setString("Game Over");
 	text.setCharacterSize((int) WIDTH*65/1000);
 	text.setFillColor(Color::White);
-	text.setPosition(Vector2f(WIDTH/3, 50));
+	text.setPosition(Vector2f(WIDTH/3, 50*HEIGHT/720));
 	window.draw(text);
 	
 	String player1, player2;
@@ -742,20 +742,20 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	
 	text.setString(player1);
 	text.setCharacterSize((int)30*WIDTH/1000);
-	text.setPosition(Vector2f(WIDTH/5, 200));
+	text.setPosition(Vector2f(WIDTH/5, 200*HEIGHT/720));
 	window.draw(text);
 	text.setString(player2);
-	text.setPosition(Vector2f(WIDTH-2*WIDTH/5, 200));
+	text.setPosition(Vector2f(WIDTH-2*WIDTH/5, 200*HEIGHT/720));
 
 	window.draw(text);
 	
 	player1 = "Score : " + to_string(game.p1.score);
 	player2 = "Score : " + to_string(game.p2.score);
 	text.setString(player1);
-	text.setPosition(Vector2f(WIDTH/5, 250));
+	text.setPosition(Vector2f(WIDTH/5, 250*HEIGHT/720));
 	window.draw(text);
 	text.setString(player2);
-	text.setPosition(Vector2f(WIDTH-2*WIDTH/5, 250));
+	text.setPosition(Vector2f(3*WIDTH/5, 250*HEIGHT/720));
 	window.draw(text);
 	
 	window.display();
@@ -771,76 +771,76 @@ void drawStart (sf::RenderWindow& window){
 	
 	text.setCharacterSize(110);
 	text.setString("PUYO PUYO");
-	text.setPosition(Vector2f(200, 80));
+	text.setPosition(Vector2f(0.2*WIDTH, 80));
 	text.setFillColor(Color::White);
 	window.draw(text);
 	
 	text.setCharacterSize(40);
 	text.setString("Player 1");
-	text.setPosition(Vector2f(160, 280));
+	text.setPosition(Vector2f(0.16*WIDTH, 280));
 	window.draw(text);
 	
 	text.setString("Player 2");
-	text.setPosition(Vector2f(680, 280));
+	text.setPosition(Vector2f(0.68*WIDTH, 280));
 	window.draw(text);
 	
 	RectangleShape touche;
-	touche.setPosition(200, 400);
+	touche.setPosition(0.2*WIDTH, 400*HEIGHT/720);
 	touche.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
 	window.draw(touche);
-	touche.setPosition(200, 480);
+	touche.setPosition(0.2*WIDTH, 480*HEIGHT/720);
 	window.draw(touche);
-	touche.setPosition(120, 480);
+	touche.setPosition(0.12*WIDTH, 480*HEIGHT/720);
 	window.draw(touche);
-	touche.setPosition(280, 480);
+	touche.setPosition(0.28*WIDTH, 480*HEIGHT/720);
 	window.draw(touche);
-	touche.setPosition(120, 600);
-	touche.setSize(Vector2f(160 + SIZEPUYO,SIZEPUYO));
+	touche.setPosition(0.12*WIDTH, 600*HEIGHT/720);
+	touche.setSize(Vector2f(0.16*WIDTH + SIZEPUYO,SIZEPUYO));
 	window.draw(touche);
 	
-	touche.setPosition(720, 400);
+	touche.setPosition(0.720*WIDTH, 400*HEIGHT/720);
 	touche.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
 	window.draw(touche);
-	touche.setPosition(720, 480);
+	touche.setPosition(0.720*WIDTH, 480*HEIGHT/720);
 	window.draw(touche);
-	touche.setPosition(640, 480);
+	touche.setPosition(0.640*WIDTH, 480*HEIGHT/720);
 	window.draw(touche);
-	touche.setPosition(800, 480);
+	touche.setPosition(0.800*WIDTH, 480*HEIGHT/720);
 	window.draw(touche);
-	touche.setPosition(640, 600);
-	touche.setSize(Vector2f(160 + SIZEPUYO,SIZEPUYO));
+	touche.setPosition(0.640*WIDTH, 600*HEIGHT/720);
+	touche.setSize(Vector2f(0.160*WIDTH + SIZEPUYO,SIZEPUYO));
 	window.draw(touche);
 	
 	text.setString("R");
 	text.setFillColor(Color::Black);
-	text.setPosition(Vector2f(215, 405));
+	text.setPosition(Vector2f(0.215*WIDTH, 405*HEIGHT/720));
 	window.draw(text);
 	text.setString("F");
-	text.setPosition(Vector2f(220, 485));
+	text.setPosition(Vector2f(0.220*WIDTH, 485*HEIGHT/720));
 	window.draw(text);
 	text.setString("D");
-	text.setPosition(Vector2f(135, 485));
+	text.setPosition(Vector2f(0.135*WIDTH, 485*HEIGHT/720));
 	window.draw(text);
 	text.setString("G");
-	text.setPosition(Vector2f(295, 485));
+	text.setPosition(Vector2f(0.295*WIDTH, 485*HEIGHT/720));
 	window.draw(text);
 	text.setString("Space");
-	text.setPosition(Vector2f(165, 605));
+	text.setPosition(Vector2f(0.165*WIDTH, 605*HEIGHT/720));
 	window.draw(text);
 	text.setString("RShift");
-	text.setPosition(Vector2f(695, 605));
+	text.setPosition(Vector2f(0.695*WIDTH, 605*HEIGHT/720));
 	window.draw(text);
 	text.setString("^");
-	text.setPosition(Vector2f(740, 405));
+	text.setPosition(Vector2f(0.740*WIDTH, 405*HEIGHT/720));
 	window.draw(text);
 	text.setString("<");
-	text.setPosition(Vector2f(655, 485));
+	text.setPosition(Vector2f(0.655*WIDTH, 485*HEIGHT/720));
 	window.draw(text);
 	text.setString(">");
-	text.setPosition(Vector2f(815, 485));
+	text.setPosition(Vector2f(0.815*WIDTH, 485*HEIGHT/720));
 	window.draw(text);
 	text.setString("v");
-	text.setPosition(Vector2f(740, 485));
+	text.setPosition(Vector2f(0.740*WIDTH, 485*HEIGHT/720));
 	window.draw(text);
 	
 	text.setFillColor(Color::White);
