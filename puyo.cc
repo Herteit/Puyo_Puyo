@@ -23,7 +23,10 @@ const int WAITINGPOSY = 100;
 const int LEFT = 0;
 const int UP = 1;
 const int RIGHT = 2;
-const int DOWN = 3; 
+const int DOWN = 3;
+const int NOT_STARTED = 0;
+const int RUNNING = 1;
+const int END = 2; 
 
 const char VOID = 'v';
 const char WHITE = 'w';
@@ -80,7 +83,8 @@ struct Player {
 
 struct Game {
 	Player p1;
-	Player p2; 
+	Player p2;
+	int state;
 };
 
 //cette structure est là pour avoir une fonction Math::random
@@ -586,6 +590,7 @@ void startGame(Game& game){
 	//initialisation bf
 	game.p1.bf2=randBlockFall();
 	game.p2.bf2=game.p1.bf2;
+	game.state = NOT_STARTED;
 	
 	//initialisation constantes 
 	
@@ -853,41 +858,20 @@ void drawStart (sf::RenderWindow& window){
 
 }
 
-void firstPage (sf::RenderWindow& window){
-	bool space = false;
-	bool shift = false;
-	while (window.isOpen() && (!space || !shift)) {
-		sf::Event event ; 
-		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
-				window.close();
-			}
-			if (event.type == sf::Event::KeyPressed) {
-				if (event.key.code == sf::Keyboard::Space) {
-					space = true;
-				}
-				if (event.key.code == sf::Keyboard::RShift) {
-					shift = true;
-				}
-			}
-		}
-		drawStart(window);
-	}
-}
-
 
 int main() {
 	
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
 	Game game ;
 	sf::Clock clock; 
+	bool space = false;
+	bool shift = false;
+	float dt;
 
 	startGame(game);
-
-	firstPage(window);
 	
 	//boucle principale 
-	while (window.isOpen()&&!game.p1.gameOver&&!game.p2.gameOver) {
+	while (window.isOpen()) {
 		//actions du joueur
 		sf::Event event ; 
 		while (window.pollEvent(event)) {
@@ -910,6 +894,7 @@ int main() {
 				}
 				if (event.key.code == sf::Keyboard::Space) {
 					game.p1.motion.down = true;
+					space = true;
 				}
 				//j2
 				if (event.key.code == sf::Keyboard::Left) {
@@ -926,6 +911,7 @@ int main() {
 				}
 				if (event.key.code == sf::Keyboard::RShift) {
 					game.p2.motion.down = true;
+					shift = true;
 				}
 			}
 			if (event.type == sf::Event::KeyReleased) {
@@ -938,51 +924,62 @@ int main() {
 			}
 		}
 		
-		//mise jour de l'état du jeu 
-		float dt = clock.restart().asSeconds();
-		game.p1.delay += dt;
-		game.p2.delay += dt; 
-        
-
-
-		//1er joueur
-		if (game.p1.doStartTour) {
-			startTour(game.p1);
-		}
+		dt = clock.restart().asSeconds();
 		
-		actionsJoueur(game.p1);
-
-		boucleJeu(game.p1, game.p2);
-		
-
-
-		//2e joueur
-		if (game.p2.doStartTour) {
-			startTour(game.p2);
-		}
-		
-		actionsJoueur(game.p2);
-
-		boucleJeu(game.p2, game.p1);
-		
-		
-		window.clear(Color::White);
-		
-		drawGame(window, game.p2, 640*WIDTH/1000);
-		drawGame(window, game.p1, 0);
-
-		window.display();
-
-	}
-	
-	while (window.isOpen()) {
-		sf::Event event ; 
-		while (window.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
-				window.close();
+		if (game.state == NOT_STARTED){
+			drawStart(window);
+			if (space && shift){
+				game.state = RUNNING;
+				game.p2.motion.down = false;
+				game.p1.motion.down = false;
 			}
 		}
-		drawEndOfGame(window, game);
+		
+		
+        
+
+		if (game.state == RUNNING){
+		
+			game.p1.delay += dt;
+			game.p2.delay += dt; 
+		
+			//1er joueur
+			if (game.p1.doStartTour) {
+				startTour(game.p1);
+			}
+			
+			actionsJoueur(game.p1);
+
+			boucleJeu(game.p1, game.p2);
+			
+
+
+			//2e joueur
+			if (game.p2.doStartTour) {
+				startTour(game.p2);
+			}
+			
+			actionsJoueur(game.p2);
+
+			boucleJeu(game.p2, game.p1);
+			
+			
+			window.clear(Color::White);
+			
+			drawGame(window, game.p2, 640*WIDTH/1000);
+			drawGame(window, game.p1, 0);
+
+			window.display();
+			
+			if (game.p1.gameOver || game.p2.gameOver){
+				game.state = END ;
+			}
+		}
+		
+		if (game.state == END){
+			drawEndOfGame(window, game);
+		}
+
 	}
 	
 	return 0 ;
