@@ -27,6 +27,7 @@ const int DOWN = 3;
 const int NOT_STARTED = 0;
 const int RUNNING = 1;
 const int END = 2; 
+const int RESTART = 3;
 
 const char VOID = 'v';
 const char WHITE = 'w';
@@ -110,28 +111,26 @@ void initBlockFall(BlockFall& bf1, const BlockFall& bf2) {
 
 
 char switchColor (int nb) {
-	char color ;
 	switch (nb) {
 		case 0 :
-			color = YELLOW;
+			return YELLOW;
 		break;
 		case 1 : 
-			color = RED ; 
+			return RED ; 
 		break ; 
 		case 2 : 
-			color = BLUE ; 
+			return BLUE ; 
 		break ; 
 		case 3 : 
-			color = GREEN ;
+			return GREEN ;
 		break ;
 		case 4 :
-			color = PURPLE ;
+			return PURPLE ;
 		break ;
 		default : 
-			color = VOID ;
+			return VOID ;
 		break ;	
 	}
-	return color;
 }
 
 
@@ -176,11 +175,10 @@ void doGravityOnBlockFall (Player& player){
 
 
 void doGravityOnAll (Player& player) {
-	int i, j, k;
-	for (i = 0; i < WIDTHMAT ; i++) {
-		for (j = 0; j<HEIGHTMAT-1;j++){
+	for (int i = 0; i < WIDTHMAT ; i++) {
+		for (int j = 0; j<HEIGHTMAT-1;j++){
 			if (!player.blocks[i][j+1].exist){
-				for (k = j; k>=0; k--) {
+				for (int k = j; k>=0; k--) {
 					assert(k>=0);
 					assert(k<HEIGHTMAT-1);
 					player.blocks[i][k+1].exist = player.blocks[i][k].exist ;
@@ -235,26 +233,18 @@ bool continueFall(const Player& player) {
 void blockDown (Player& p1) {
 	switch (p1.bf1.orient) {
 		case LEFT : { 
-			assert(p1.bf1.posMat.x-1>=0);
-			assert(p1.bf1.posMat.x-1<HEIGHTMAT);
 			p1.blocks[p1.bf1.posMat.x-1][p1.bf1.posMat.y].color = p1.bf1.color2;
 			p1.blocks[p1.bf1.posMat.x-1][p1.bf1.posMat.y].exist = true;
 		} break;
 		case RIGHT : {
-			assert(p1.bf1.posMat.x+1>=0);
-			assert(p1.bf1.posMat.x+1<HEIGHTMAT);
 			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].color = p1.bf1.color2;
 			p1.blocks[p1.bf1.posMat.x+1][p1.bf1.posMat.y].exist = true;
 		} break;
 		case UP : {
-			assert(p1.bf1.posMat.y-1>=0);
-			assert(p1.bf1.posMat.y-1<HEIGHTMAT);
 			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y-1].color = p1.bf1.color2;
 			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y-1].exist = true;
 		} break;
 		case DOWN : {
-			assert(p1.bf1.posMat.y+1>=0);
-			assert(p1.bf1.posMat.y+1<HEIGHTMAT);
 			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y+1].color = p1.bf1.color2;
 			p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y+1].exist = true;
 		} break;
@@ -263,31 +253,28 @@ void blockDown (Player& p1) {
 
 
 
-int AttribuerGroupe ( Player& player , Pos posBlock ,  int groupID ){
+int AttribuerGroupe (Player& player,int x1, int y1,  int groupID){
 	int x;
 	int y;
-	int longueurChaine=0;
+	int chainLength=0;
 	for (int i = 0; i < 4; i++){
 		if (i%2 == 0){
-			x = posBlock.x +i -1;
-			y = posBlock.y;
+			x = x1 +i -1;
+			y = y1;
 		} else {
-			x = posBlock.x;
-			y = posBlock.y +i -2;
+			x = x1;
+			y = y1 +i -2;
 		}
 		if (x >= 0 && x < WIDTHMAT && y >= 0 && y < HEIGHTMAT)  {
 			if ( player.blocks[x][y].exist ) {
-				if ( player.blocks[posBlock.x][posBlock.y].color == player.blocks[x][y].color && player.blocks[x][y].groupID == 0) {
+				if ( player.blocks[x1][y1].color == player.blocks[x][y].color && player.blocks[x][y].groupID == 0) {
 					player.blocks[x][y].groupID = groupID;
-					Pos pos ;
-					pos.x = x;
-					pos.y = y;
-					longueurChaine += (1 + AttribuerGroupe ( player ,pos , groupID ));
+					chainLength += (1 + AttribuerGroupe (player, x, y, groupID));
 				}
 			}
 		}
 	}
-	return longueurChaine ;
+	return chainLength ;
 }
 
 
@@ -297,11 +284,8 @@ void checkAllChains (Player& player) {
 	for (int i = 0; i < WIDTHMAT; i++) {
 		for (int j = 0; j < HEIGHTMAT; j++) {
 			if (player.blocks[i][j].exist && player.blocks[i][j].groupID == 0) {
-				Pos pos;
-				pos.x = i;
-				pos.y = j;
-				int longueur = AttribuerGroupe (player ,pos ,baseGroupId ) ;
-				if (longueur > 0) {
+				int length = AttribuerGroupe (player, i, j, baseGroupId) ;
+				if (length > 0) {
 				baseGroupId += 1 ;
 				}
 			}
@@ -406,7 +390,6 @@ int destroyBlock (Player& player) {
 	}
 	return nbrChain ; 
 }
-
 
 
 
@@ -763,6 +746,12 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	text.setPosition(Vector2f(3*WIDTH/5, 250*HEIGHT/720));
 	window.draw(text);
 	
+
+	text.setCharacterSize((int)30*WIDTH/1000);
+	text.setString("-- Press Space and RShift to restart --");
+	text.setPosition(Vector2f(230, 640));
+	window.draw(text);
+	
 	window.display();
 }
 
@@ -893,8 +882,11 @@ int main() {
 					game.p1.motion.right = true;
 				}
 				if (event.key.code == sf::Keyboard::Space) {
-					game.p1.motion.down = true;
-					space = true;
+					if (game.state == RUNNING){
+						game.p1.motion.down = true;
+					} else {
+						space = true;
+					}
 				}
 				//j2
 				if (event.key.code == sf::Keyboard::Left) {
@@ -910,8 +902,11 @@ int main() {
 					game.p2.orient.anticlockwise = true;
 				}
 				if (event.key.code == sf::Keyboard::RShift) {
-					game.p2.motion.down = true;
-					shift = true;
+					if (game.state == RUNNING){
+						game.p2.motion.down = true;
+					} else {
+						shift = true;
+					}
 				}
 			}
 			if (event.type == sf::Event::KeyReleased) {
@@ -930,8 +925,8 @@ int main() {
 			drawStart(window);
 			if (space && shift){
 				game.state = RUNNING;
-				game.p2.motion.down = false;
-				game.p1.motion.down = false;
+				space = false;
+				shift = false;
 			}
 		}
 		
@@ -978,6 +973,16 @@ int main() {
 		
 		if (game.state == END){
 			drawEndOfGame(window, game);
+			if (space && shift){
+				game.state = RESTART;
+				space = false;
+				shift = false;
+			}
+		}
+		
+		if (game.state == RESTART){
+			startGame(game);
+			game.state = RUNNING;
 		}
 
 	}
