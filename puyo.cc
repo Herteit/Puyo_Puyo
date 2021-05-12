@@ -714,6 +714,16 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	window.clear(Color::Black);
 	
+	sf::Texture texture;
+	if (!texture.loadFromFile("sprite.png"))
+	{
+	   std::cout << "Erreur de chargement" << std::endl;
+	}
+	sf::Sprite spritep2;
+	sf::Sprite spritep1;
+	spritep1.setTexture(texture);
+	spritep2.setTexture(texture);
+	
 	Font font;
 	font.loadFromFile("OpenSans-Regular.ttf");
 	sf::Text text;
@@ -725,15 +735,25 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	text.setPosition(Vector2f(WIDTH/3, 50*HEIGHT/720));
 	window.draw(text);
 	
-	String player1, player2;
 	
 	if (game.p1.gameOver){
-		player1 = "Player 1 lost";
-		player2 = "Player 2 won";
+		spritep2.setTextureRect(sf::IntRect(424,210,99,32));
+		spritep1.setTextureRect(sf::IntRect(428,177,95,32));
 	} else {
-		player2 = "Player 2 lost";
-		player1 = "Player 1 won";	
+		spritep1.setTextureRect(sf::IntRect(424,210,99,32));
+		spritep2.setTextureRect(sf::IntRect(428,177,95,32));	
 	}
+	
+	sf::Vector2f scalep1 = spritep1.getScale();
+	spritep1.setScale(scalep1.x * 2, scalep1.y * 2);
+	spritep1.setPosition(Vector2f(WIDTH/5, 200*HEIGHT/720));
+	window.draw(spritep1);
+	sf::Vector2f scalep2 = spritep2.getScale();
+	spritep2.setScale(scalep2.x * 2, scalep2.y * 2);
+	spritep2.setPosition(Vector2f(WIDTH-2*WIDTH/5, 200*HEIGHT/720));
+	window.draw(spritep2);
+	
+	string player1, player2;
 	
 	text.setString(player1);
 	text.setCharacterSize((int)30*WIDTH/1000);
