@@ -538,9 +538,7 @@ void actionsJoueur(Player& p1) {
 		p1.bf1.speed = FALLSPEED*3;
 	}
 	
-	if (!p1.motion.down) {
-		p1.bf1.speed = FALLSPEED;
-	}
+	
 }
 
 
@@ -616,6 +614,10 @@ void boucleJeu(Player& p1, Player& p2){
 		if (p1.delay * p1.bf1.speed > DELAY) {
 			doGravityOnBlockFall(p1);
 			p1.delay -= DELAY / p1.bf1.speed;
+			if (!p1.motion.down) {
+				p1.bf1.speed = FALLSPEED;
+			
+			}
 		}
 	} else {
 		blockDown(p1);
