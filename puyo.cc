@@ -28,6 +28,7 @@ const int NOT_STARTED = 0;
 const int RUNNING = 1;
 const int END = 2; 
 const int RESTART = 3;
+const int PAUSE = 4; 
 
 const char VOID = 'v';
 const char WHITE = 'w';
@@ -341,13 +342,13 @@ void resetBlocksForID (Player& player, int ID) {
 						player.blocks[i][j+1].color = VOID ; 
 					}
 				}
-				if (j-1 > 0){
+				if (j-1 >= 0){
 					if (player.blocks[i][j-1].color == WHITE) {
 						player.blocks[i][j-1].exist = false ; 
 						player.blocks[i][j-1].color = VOID ; 
 					}
 				}
-				if (i-1 > 0){
+				if (i-1 >= 0){
 					if (player.blocks[i-1][j].color == WHITE) {
 						player.blocks[i-1][j].exist = false ; 
 						player.blocks[i-1][j].color = VOID ; 
@@ -671,11 +672,11 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 		
 
 	RectangleShape waitingBF ;
-	waitingBF.setPosition(WAITINGPOSX + (displacement /16), WAITINGPOSY + (displacement/5));
+	waitingBF.setPosition(WAITINGPOSX + (displacement /12), WAITINGPOSY + (displacement/5));
 	waitingBF.setFillColor(getColor(player.bf2.color1));
 	waitingBF.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
 	window.draw(waitingBF);
-	waitingBF.setPosition(WAITINGPOSX + SIZEPUYO + (displacement /16 ), WAITINGPOSY + (displacement/5));
+	waitingBF.setPosition(WAITINGPOSX + SIZEPUYO + (displacement /12), WAITINGPOSY + (displacement/5));
 	waitingBF.setFillColor(getColor(player.bf2.color2));
 	window.draw(waitingBF);
 
@@ -700,6 +701,12 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 	text.setString("Player 2 : ");
 	text.setPosition(Vector2f(displacement - 120*WIDTH/1000, 500*HEIGHT/720));
 	window.draw(text);
+	
+	text.setString("Press P to pause");
+	text.setPosition(Vector2f(0.435*WIDTH, 0.95*HEIGHT));
+	text.setCharacterSize((int)16*WIDTH/1000);
+	window.draw(text);
+	
 
 }
 
@@ -847,6 +854,17 @@ void drawStart (sf::RenderWindow& window){
 
 }
 
+void drawPause(sf::RenderWindow& window){
+	
+	RectangleShape pause ;
+	pause.setPosition(WIDTH / 2 - 0.7 * SIZEPUYO, HEIGHT/2.1);
+	pause.setFillColor(Color(128,128,128,128));
+	pause.setSize(Vector2f(0.5*SIZEPUYO,2*SIZEPUYO));
+	window.draw(pause);
+	pause.setPosition(WIDTH/2+ 0.2 *SIZEPUYO, HEIGHT/2.1);
+	window.draw(pause);
+	window.display();
+}
 
 int main() {
 	
@@ -855,6 +873,7 @@ int main() {
 	sf::Clock clock; 
 	bool space = false;
 	bool shift = false;
+	bool pause = false;
 	float dt;
 
 	startGame(game);
@@ -868,6 +887,9 @@ int main() {
 				window.close();
 			}
 			if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == sf::Keyboard::P) {
+					pause = true;
+				}
 				//j1
 				if (event.key.code == sf::Keyboard::R) {
 					game.p1.orient.clockwise = true;
@@ -915,6 +937,30 @@ int main() {
 				}
 				if (event.key.code == sf::Keyboard::RShift) {
 					game.p2.motion.down = false;
+				}
+				if (event.key.code == sf::Keyboard::R) {
+					game.p1.orient.clockwise = false;
+				}
+				if (event.key.code == sf::Keyboard::F) {
+					game.p1.orient.anticlockwise = false;
+				}
+				if (event.key.code == sf::Keyboard::D) {
+					game.p1.motion.left = false;
+				}
+				if (event.key.code == sf::Keyboard::G) {
+					game.p1.motion.right = false;
+				}
+				if (event.key.code == sf::Keyboard::Left) {
+					game.p2.motion.left = false;
+				}
+				if (event.key.code == sf::Keyboard::Right) {
+					game.p2.motion.right = false;
+				}
+				if (event.key.code == sf::Keyboard::Up) {
+					game.p2.orient.clockwise = false;
+				}
+				if (event.key.code == sf::Keyboard::Down) {
+					game.p2.orient.anticlockwise = false;
 				}
 			}
 		}
@@ -966,6 +1012,11 @@ int main() {
 
 			window.display();
 			
+			if (pause){
+				game.state = PAUSE;
+				pause = false;
+			}
+			
 			if (game.p1.gameOver || game.p2.gameOver){
 				game.state = END ;
 			}
@@ -983,6 +1034,14 @@ int main() {
 		if (game.state == RESTART){
 			startGame(game);
 			game.state = RUNNING;
+		}
+		
+		if (game.state == PAUSE){
+			drawPause(window);
+			if (pause){
+				game.state = RUNNING;
+				pause = false;
+			}
 		}
 
 	}
