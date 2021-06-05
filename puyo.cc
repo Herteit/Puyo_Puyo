@@ -9,8 +9,6 @@
 using namespace std;
 using namespace sf;
 
-//on définit les constantes hors du main pour ne pas avoir à les appeler à chaque fois qu'elles sont utilisées dans un programme
-
 const int NBCOLORS = 5;
 const int HEIGHT = 720;
 const int WIDTH = 1000;
@@ -45,11 +43,6 @@ struct Pos {
 	int y ;
 };
 
-struct ChangeOrient {
-	bool clockwise;
-	bool anticlockwise;
-};
-
 struct Motion {
 	bool right;
 	bool left;
@@ -76,11 +69,12 @@ struct Player {
 	Block blocks[WIDTHMAT][HEIGHTMAT] ;
 	int score ;
 	Motion motion;
-	ChangeOrient orient;
+	bool changeOrient;
 	int penalty;
 	bool gameOver;
 	float delay;
 	bool doStartTour;
+	bool startGame;
 };
 
 struct Game {
@@ -89,7 +83,7 @@ struct Game {
 	int state;
 };
 
-//cette structure est là pour avoir une fonction Math::random
+
 struct Math {
   static float random() {
     static mt19937 engine(time(nullptr));
@@ -419,7 +413,6 @@ Pos getPosSecondBlock (const Player& player){
 
 void left(Player& p1) {
 	int dep = false;
-	//on verifie si c'est possible
 	switch (p1.bf1.orient) { 
 		case LEFT : {
 			if (!p1.blocks[p1.bf1.posMat.x - 2][p1.bf1.posMat.y].exist && p1.bf1.posMat.x - 2 >= 0){
@@ -438,7 +431,6 @@ void left(Player& p1) {
 			}
 		} break;
 	}
-	//et on le déplace
 	if (dep) {
 		p1.bf1.posMat.x -- ;
 		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].color = p1.bf1.color1;
@@ -452,7 +444,6 @@ void left(Player& p1) {
 
 void right(Player& p1) {
 	int dep = false;
-	//on verifie si c'est possible
 	switch (p1.bf1.orient) { 
 		case RIGHT : {
 			if (!p1.blocks[p1.bf1.posMat.x + 2][p1.bf1.posMat.y].exist && p1.bf1.posMat.x + 2 < WIDTHMAT){
@@ -471,7 +462,6 @@ void right(Player& p1) {
 			}
 		} break;
 	}
-	//et on le déplace
 	if (dep) {
 		p1.bf1.posMat.x ++ ;
 		p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y].color = p1.bf1.color1;
@@ -485,7 +475,7 @@ void right(Player& p1) {
 
 void actionsJoueur(Player& p1) {
 	bool doChange = false;
-	if (p1.orient.clockwise) {
+	if (p1.changeOrient) {
 		if (p1.bf1.orient == LEFT){
 			doChange = (p1.bf1.posMat.y - 1 >=0 && !p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist);
 		}
@@ -502,26 +492,7 @@ void actionsJoueur(Player& p1) {
 		if (doChange){
 			p1.bf1.orient = (p1.bf1.orient + 1) % 4;
 		}
-		p1.orient.clockwise = false;
-	}
-	
-	if (p1.orient.anticlockwise) {
-		if (p1.bf1.orient == RIGHT){
-			doChange = (p1.bf1.posMat.y - 1 >=0 && !p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y - 1].exist);
-		}
-		if (p1.bf1.orient == LEFT){
-			doChange = (p1.bf1.posMat.y + 1 < HEIGHTMAT && !p1.blocks[p1.bf1.posMat.x][p1.bf1.posMat.y + 1].exist);
-		}
-		if (p1.bf1.orient == DOWN){
-			doChange = (p1.bf1.posMat.x + 1 < WIDTHMAT && !p1.blocks[p1.bf1.posMat.x + 1][p1.bf1.posMat.y].exist);
-		}
-		if (p1.bf1.orient == UP){
-			doChange = (p1.bf1.posMat.x - 1 >=0 && !p1.blocks[p1.bf1.posMat.x - 1][p1.bf1.posMat.y].exist);
-		}
-		if (doChange){
-			p1.bf1.orient = (p1.bf1.orient + 3) % 4;
-		}
-		p1.orient.anticlockwise = false;
+		p1.changeOrient = false;
 	}
 
 	if (p1.motion.left) { 
@@ -547,20 +518,19 @@ void startPlayer(Player& player){
 	player.motion.left = false;
 	player.motion.down = false;
 		
-	player.orient.clockwise = false;
-	player.orient.anticlockwise = false;
+	player.changeOrient = false;
 	
 	player.penalty = 0;
 	player.gameOver = false;
 	player.delay = 0;
 	player.doStartTour = true;
 	player.score = 0;
+	player.startGame = false;
 }
 
 
 
 void startGame(Game& game){
-	//initialisation de la matrice	
 	for (int i = 0; i < WIDTHMAT; i++) {
 		for (int j = 0; j < HEIGHTMAT; j++) {
 			game.p1.blocks[i][j].color = VOID;
@@ -569,12 +539,10 @@ void startGame(Game& game){
 			game.p2.blocks[i][j].exist = false;
 		}
 	}
-	//initialisation bf
+
 	game.p1.bf2=randBlockFall();
 	game.p2.bf2=game.p1.bf2;
 	game.state = NOT_STARTED;
-	
-	//initialisation constantes 
 	
 	startPlayer(game.p1);
 	startPlayer(game.p2);
@@ -661,13 +629,13 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 	}
 
 	RectangleShape cases ;
-	cases.setPosition(displacement + player.bf1.posMat.x*SIZEPUYO,player.bf1.posMat.y*SIZEPUYO+SIZEPUYO/DELAY*player.delay*player.bf1.speed);
+	cases.setPosition(displacement + player.bf1.posMat.x*SIZEPUYO, player.bf1.posMat.y*SIZEPUYO+SIZEPUYO/DELAY*player.delay*player.bf1.speed);
 	cases.setFillColor(getColor(player.bf1.color1));
 	cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
 	window.draw(cases);
 
 	Pos pos = getPosSecondBlock(player);
-	cases.setPosition(displacement + pos.x*SIZEPUYO,pos.y*SIZEPUYO+SIZEPUYO/DELAY*player.delay*player.bf1.speed);
+	cases.setPosition(displacement + pos.x*SIZEPUYO, pos.y*SIZEPUYO+SIZEPUYO/DELAY*player.delay*player.bf1.speed);
 	cases.setFillColor(getColor(player.bf1.color2));
 	cases.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
 	window.draw(cases);
@@ -708,8 +676,6 @@ void drawGame (sf::RenderWindow& window, const Player& player, int displacement)
 	text.setPosition(Vector2f(0.435*WIDTH, 0.95*HEIGHT));
 	text.setCharacterSize((int)16*WIDTH/1000);
 	window.draw(text);
-	
-
 }
 
 
@@ -736,7 +702,6 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	text.setFillColor(Color::White);
 	text.setPosition(Vector2f(WIDTH/3, 50*HEIGHT/720));
 	window.draw(text);
-	
 	
 	if (game.p1.gameOver){
 		spritep2.setTextureRect(sf::IntRect(424,210,99,32));
@@ -775,9 +740,8 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	text.setPosition(Vector2f(3*WIDTH/5, 275*HEIGHT/720));
 	window.draw(text);
 	
-
 	text.setCharacterSize((int)30*WIDTH/1000);
-	text.setString("-- Press Space and RShift to restart --");
+	text.setString("-- Press S and Down Arrow to restart --");
 	text.setPosition(Vector2f(230, 640));
 	window.draw(text);
 	
@@ -856,8 +820,12 @@ void drawStart (sf::RenderWindow& window){
 	
 	text.setFillColor(Color::White);
 	text.setCharacterSize(20);
-	text.setString("-- Press Space and RShift to start --");
+	text.setString("-- Press S and Down Arrow to start --");
 	text.setPosition(Vector2f(340, 40));
+	window.draw(text);
+	
+	text.setString("-- Humbert Rachel -- Emma Mange -- Anton Dolard --");
+	text.setPosition(Vector2f(240, 640));
 	window.draw(text);
 	
 	window.display();
@@ -881,16 +849,12 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Puyo Puyo");
 	Game game ;
 	sf::Clock clock; 
-	bool space = false;
-	bool shift = false;
 	bool pause = false;
 	float dt;
 
 	startGame(game);
 	
-	//boucle principale 
 	while (window.isOpen()) {
-		//actions du joueur
 		sf::Event event ; 
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed) {
@@ -900,12 +864,8 @@ int main() {
 				if (event.key.code == sf::Keyboard::P) {
 					pause = true;
 				}
-				//j1
 				if (event.key.code == sf::Keyboard::Z) {
-					game.p1.orient.clockwise = true;
-				}
-				if (event.key.code == sf::Keyboard::S) {
-					game.p1.motion.down = true;
+					game.p1.changeOrient = true;
 				}
 				if (event.key.code == sf::Keyboard::Q) {
 					game.p1.motion.left = true;
@@ -913,14 +873,13 @@ int main() {
 				if (event.key.code == sf::Keyboard::D) {
 					game.p1.motion.right = true;
 				}
-				if (event.key.code == sf::Keyboard::Space) {
+				if (event.key.code == sf::Keyboard::S) {
 					if (game.state == RUNNING){
 						game.p1.motion.down = true;
 					} else {
-						space = true;
+						game.p1.startGame = true;
 					}
 				}
-				//j2
 				if (event.key.code == sf::Keyboard::Left) {
 					game.p2.motion.left = true;
 				}
@@ -928,36 +887,30 @@ int main() {
 					game.p2.motion.right = true;
 				}
 				if (event.key.code == sf::Keyboard::Up) {
-					game.p2.orient.clockwise = true;
+					game.p2.changeOrient = true;
 				}
 				if (event.key.code == sf::Keyboard::Down) {
-					game.p2.motion.down = true;
-				}
-				if (event.key.code == sf::Keyboard::RShift) {
 					if (game.state == RUNNING){
 						game.p2.motion.down = true;
 					} else {
-						shift = true;
+						game.p2.startGame = true;
 					}
 				}
 			}
 			if (event.type == sf::Event::KeyReleased) {
-				if (event.key.code == sf::Keyboard::Space) {
+				if (event.key.code == sf::Keyboard::S) {
 					game.p1.motion.down = false;
 				}
-				if (event.key.code == sf::Keyboard::RShift) {
+				if (event.key.code == sf::Keyboard::Down) {
 					game.p2.motion.down = false;
 				}
-				if (event.key.code == sf::Keyboard::R) {
-					game.p1.orient.clockwise = false;
+				if (event.key.code == sf::Keyboard::Z) {
+					game.p1.changeOrient = false;
 				}
-				if (event.key.code == sf::Keyboard::F) {
-					game.p1.orient.anticlockwise = false;
-				}
-				if (event.key.code == sf::Keyboard::D) {
+				if (event.key.code == sf::Keyboard::Q) {
 					game.p1.motion.left = false;
 				}
-				if (event.key.code == sf::Keyboard::G) {
+				if (event.key.code == sf::Keyboard::D) {
 					game.p1.motion.right = false;
 				}
 				if (event.key.code == sf::Keyboard::Left) {
@@ -967,7 +920,7 @@ int main() {
 					game.p2.motion.right = false;
 				}
 				if (event.key.code == sf::Keyboard::Up) {
-					game.p2.orient.clockwise = false;
+					game.p2.changeOrient = false;
 				}
 				if (event.key.code == sf::Keyboard::Down) {
 					game.p2.motion.down = false;
@@ -979,47 +932,35 @@ int main() {
 		
 		if (game.state == NOT_STARTED){
 			drawStart(window);
-			if (space && shift){
+			if (game.p1.startGame && game.p2.startGame){
 				game.state = RUNNING;
-				space = false;
-				shift = false;
+				game.p1.startGame = false;
+				game.p2.startGame = false;
 			}
 		}
-		
-		
-        
 
 		if (game.state == RUNNING){
 		
 			game.p1.delay += dt;
 			game.p2.delay += dt; 
 		
-			//1er joueur
 			if (game.p1.doStartTour) {
 				startTour(game.p1);
 			}
 			
 			actionsJoueur(game.p1);
-
 			boucleJeu(game.p1, game.p2);
-			
 
-
-			//2e joueur
 			if (game.p2.doStartTour) {
 				startTour(game.p2);
 			}
 			
 			actionsJoueur(game.p2);
-
 			boucleJeu(game.p2, game.p1);
 			
-			
 			window.clear(Color::White);
-			
 			drawGame(window, game.p2, 640*WIDTH/1000);
 			drawGame(window, game.p1, 0);
-
 			window.display();
 			
 			if (pause){
@@ -1034,10 +975,10 @@ int main() {
 		
 		if (game.state == END){
 			drawEndOfGame(window, game);
-			if (space && shift){
+			if (game.p1.startGame && game.p2.startGame){
 				game.state = RESTART;
-				space = false;
-				shift = false;
+				game.p1.startGame = false;
+				game.p2.startGame = false;
 			}
 		}
 		
@@ -1055,6 +996,5 @@ int main() {
 		}
 
 	}
-	
 	return 0 ;
 }
