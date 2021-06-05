@@ -943,7 +943,7 @@ int main() {
 					game.p2.orient.clockwise = true;
 				}
 				if (event.key.code == sf::Keyboard::Down) {
-					game.p2.orient.anticlockwise = true;
+					game.p2.motion.down = true;
 				}
 				if (event.key.code == sf::Keyboard::RShift) {
 					if (game.state == RUNNING){
@@ -982,7 +982,7 @@ int main() {
 					game.p2.orient.clockwise = false;
 				}
 				if (event.key.code == sf::Keyboard::Down) {
-					game.p2.orient.anticlockwise = false;
+					game.p2.motion.down = false;
 				}
 			}
 		}
