@@ -769,10 +769,10 @@ void drawEndOfGame (sf::RenderWindow& window, const Game& game){
 	player1 = "Score : " + to_string(game.p1.score);
 	player2 = "Score : " + to_string(game.p2.score);
 	text.setString(player1);
-	text.setPosition(Vector2f(WIDTH/5, 250*HEIGHT/720));
+	text.setPosition(Vector2f(WIDTH/5, 275*HEIGHT/720));
 	window.draw(text);
 	text.setString(player2);
-	text.setPosition(Vector2f(3*WIDTH/5, 250*HEIGHT/720));
+	text.setPosition(Vector2f(3*WIDTH/5, 275*HEIGHT/720));
 	window.draw(text);
 	
 
@@ -817,9 +817,6 @@ void drawStart (sf::RenderWindow& window){
 	window.draw(touche);
 	touche.setPosition(0.28*WIDTH, 480*HEIGHT/720);
 	window.draw(touche);
-	touche.setPosition(0.12*WIDTH, 600*HEIGHT/720);
-	touche.setSize(Vector2f(0.16*WIDTH + SIZEPUYO,SIZEPUYO));
-	window.draw(touche);
 	
 	touche.setPosition(0.720*WIDTH, 400*HEIGHT/720);
 	touche.setSize(Vector2f(SIZEPUYO,SIZEPUYO));
@@ -830,28 +827,19 @@ void drawStart (sf::RenderWindow& window){
 	window.draw(touche);
 	touche.setPosition(0.800*WIDTH, 480*HEIGHT/720);
 	window.draw(touche);
-	touche.setPosition(0.640*WIDTH, 600*HEIGHT/720);
-	touche.setSize(Vector2f(0.160*WIDTH + SIZEPUYO,SIZEPUYO));
-	window.draw(touche);
 	
-	text.setString("R");
+	text.setString("Z");
 	text.setFillColor(Color::Black);
 	text.setPosition(Vector2f(0.215*WIDTH, 405*HEIGHT/720));
 	window.draw(text);
-	text.setString("F");
+	text.setString("S");
 	text.setPosition(Vector2f(0.220*WIDTH, 485*HEIGHT/720));
 	window.draw(text);
-	text.setString("D");
+	text.setString("Q");
 	text.setPosition(Vector2f(0.135*WIDTH, 485*HEIGHT/720));
 	window.draw(text);
-	text.setString("G");
+	text.setString("D");
 	text.setPosition(Vector2f(0.295*WIDTH, 485*HEIGHT/720));
-	window.draw(text);
-	text.setString("Space");
-	text.setPosition(Vector2f(0.165*WIDTH, 605*HEIGHT/720));
-	window.draw(text);
-	text.setString("RShift");
-	text.setPosition(Vector2f(0.695*WIDTH, 605*HEIGHT/720));
 	window.draw(text);
 	text.setString("^");
 	text.setPosition(Vector2f(0.740*WIDTH, 405*HEIGHT/720));
@@ -913,16 +901,16 @@ int main() {
 					pause = true;
 				}
 				//j1
-				if (event.key.code == sf::Keyboard::R) {
+				if (event.key.code == sf::Keyboard::Z) {
 					game.p1.orient.clockwise = true;
 				}
-				if (event.key.code == sf::Keyboard::F) {
-					game.p1.orient.anticlockwise = true;
+				if (event.key.code == sf::Keyboard::S) {
+					game.p1.motion.down = true;
 				}
-				if (event.key.code == sf::Keyboard::D) {
+				if (event.key.code == sf::Keyboard::Q) {
 					game.p1.motion.left = true;
 				}
-				if (event.key.code == sf::Keyboard::G) {
+				if (event.key.code == sf::Keyboard::D) {
 					game.p1.motion.right = true;
 				}
 				if (event.key.code == sf::Keyboard::Space) {
